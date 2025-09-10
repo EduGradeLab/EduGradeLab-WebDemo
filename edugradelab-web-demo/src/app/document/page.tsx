@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Sidebar from '@/components/Sidebar'
 
 interface Document {
@@ -34,11 +34,7 @@ export default function DocumentPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
 
-  useEffect(() => {
-    loadDocuments()
-  }, [pagination.page, searchTerm, statusFilter])
-
-  const loadDocuments = async () => {
+  const loadDocuments = useCallback(async () => {
     setLoading(true)
     try {
       const params = new URLSearchParams({
@@ -53,13 +49,24 @@ export default function DocumentPage() {
         const data = await response.json()
         setDocuments(data.documents || [])
         setPagination(data.pagination || pagination)
+      } else {
+        const errorData = await response.json().catch(() => ({ error: 'Bilinmeyen hata' }))
+        console.error('API error:', errorData.error)
+        // Show user-friendly error message without breaking the UI
+        setDocuments([])
       }
     } catch (error) {
       console.error('Documents load error:', error)
+      // Show empty state instead of breaking the UI
+      setDocuments([])
     } finally {
       setLoading(false)
     }
-  }
+  }, [pagination, searchTerm, statusFilter])
+
+  useEffect(() => {
+    loadDocuments()
+  }, [loadDocuments])
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -81,14 +88,6 @@ export default function DocumentPage() {
       case 'error': return 'Hata'
       default: return status
     }
-  }
-
-  const formatFileSize = (bytes: number) => {
-    if (bytes === 0) return '0 Bytes'
-    const k = 1024
-    const sizes = ['Bytes', 'KB', 'MB', 'GB']
-    const i = Math.floor(Math.log(bytes) / Math.log(k))
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
   }
 
   const formatDate = (dateString: string) => {

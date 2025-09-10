@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useCallback } from 'react'
 import { useDropzone } from 'react-dropzone'
 
 interface FileUploadProps {
@@ -9,15 +9,13 @@ interface FileUploadProps {
 }
 
 export default function FileUpload({ onFileSelect, isUploading = false }: FileUploadProps) {
-  const [isDragActive, setIsDragActive] = useState(false)
-
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles.length > 0) {
       onFileSelect(acceptedFiles[0])
     }
   }, [onFileSelect])
 
-  const { getRootProps, getInputProps, isDragReject } = useDropzone({
+  const { getRootProps, getInputProps, isDragActive, isDragReject } = useDropzone({
     onDrop,
     accept: {
       'image/*': ['.jpeg', '.jpg', '.png', '.gif', '.bmp', '.webp'],

@@ -238,7 +238,7 @@ export default function FeaturesPage() {
               Özellikler
             </h1>
             <p className="text-gray-600">
-              EduGradeLab\'in sunduğu tüm özellikler ve geliştirmeler
+              EduGradeLab&apos;in sunduğu tüm özellikler ve geliştirmeler
             </p>
           </div>
 

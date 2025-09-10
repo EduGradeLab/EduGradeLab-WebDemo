@@ -28,28 +28,48 @@ export async function POST(request: NextRequest) {
     }
 
     // Convert file to buffer
-    const bytes = await file.arrayBuffer()
-    const buffer = Buffer.from(bytes)
+    let bytes: ArrayBuffer
+    let buffer: Buffer
+    
+    try {
+      bytes = await file.arrayBuffer()
+      buffer = Buffer.from(bytes)
+    } catch (fileError) {
+      console.error('File processing error:', fileError)
+      return NextResponse.json({ error: 'File processing failed' }, { status: 400 })
+    }
 
     // Save to database
-    const examImage = await prisma.exam_images.create({
-      data: {
-        user_id: user.id,
-        image_blob: buffer,
-        filename: file.name,
-        filetype: file.type,
-        status: 'UPLOADED'
-      }
-    })
+    let examImage
+    try {
+      examImage = await prisma.exam_images.create({
+        data: {
+          user_id: user.id,
+          image_blob: buffer,
+          filename: file.name,
+          filetype: file.type,
+          status: 'UPLOADED'
+        }
+      })
+    } catch (dbError) {
+      console.error('Database error while saving image:', dbError)
+      return NextResponse.json({ error: 'Database error' }, { status: 500 })
+    }
 
     // Create OCR job
-    const ocrJob = await prisma.ocr_jobs.create({
-      data: {
-        user_id: user.id,
-        exam_image_id: examImage.id,
-        status: 'WAITING'
-      }
-    })
+    let ocrJob
+    try {
+      ocrJob = await prisma.ocr_jobs.create({
+        data: {
+          user_id: user.id,
+          exam_image_id: examImage.id,
+          status: 'WAITING'
+        }
+      })
+    } catch (dbError) {
+      console.error('Database error while creating OCR job:', dbError)
+      return NextResponse.json({ error: 'Database error' }, { status: 500 })
+    }
 
     // TODO: Send to scanner webhook
     // This is where you would send the file to your scanner service

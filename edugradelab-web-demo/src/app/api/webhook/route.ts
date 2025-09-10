@@ -4,7 +4,14 @@ import { prisma } from '@/lib/prisma'
 // Webhook endpoint for receiving OCR results from n8n
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
+    let body
+    try {
+      body = await request.json()
+    } catch (parseError) {
+      console.error('Invalid JSON in webhook request:', parseError)
+      return NextResponse.json({ error: 'Invalid JSON payload' }, { status: 400 })
+    }
+    
     console.log('Webhook received:', body)
 
     // Validate webhook payload
@@ -14,86 +21,127 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Job ID is required' }, { status: 400 })
     }
 
+    let jobIdInt
+    try {
+      jobIdInt = parseInt(jobId)
+      if (isNaN(jobIdInt)) {
+        return NextResponse.json({ error: 'Invalid job ID format' }, { status: 400 })
+      }
+    } catch (parseError) {
+      return NextResponse.json({ error: 'Invalid job ID' }, { status: 400 })
+    }
+
     // Find the OCR job
-    const ocrJob = await prisma.ocr_jobs.findUnique({
-      where: { id: parseInt(jobId) }
-    })
+    let ocrJob
+    try {
+      ocrJob = await prisma.ocr_jobs.findUnique({
+        where: { id: jobIdInt }
+      })
+    } catch (dbError) {
+      console.error('Database error while finding OCR job:', dbError)
+      return NextResponse.json({ error: 'Database error' }, { status: 500 })
+    }
 
     if (!ocrJob) {
       return NextResponse.json({ error: 'OCR job not found' }, { status: 404 })
     }
 
     // Update job status
-    await prisma.ocr_jobs.update({
-      where: { id: parseInt(jobId) },
-      data: {
-        status: status === 'error' ? 'ERROR' : 'DONE',
-        updated_at: new Date()
-      }
-    })
+    try {
+      await prisma.ocr_jobs.update({
+        where: { id: jobIdInt },
+        data: {
+          status: status === 'error' ? 'ERROR' : 'DONE',
+          updated_at: new Date()
+        }
+      })
+    } catch (dbError) {
+      console.error('Database error while updating OCR job:', dbError)
+      return NextResponse.json({ error: 'Database error' }, { status: 500 })
+    }
 
     // Update exam image status
-    await prisma.exam_images.update({
-      where: { id: ocrJob.exam_image_id },
-      data: {
-        status: status === 'error' ? 'ERROR' : 'PROCESSED',
-        error_message: error || null
-      }
-    })
+    try {
+      await prisma.exam_images.update({
+        where: { id: ocrJob.exam_image_id },
+        data: {
+          status: status === 'error' ? 'ERROR' : 'PROCESSED',
+          error_message: error || null
+        }
+      })
+    } catch (dbError) {
+      console.error('Database error while updating exam image:', dbError)
+      return NextResponse.json({ error: 'Database error' }, { status: 500 })
+    }
 
     // Create or update OCR result
     if (status !== 'error' && ocrText) {
-      await prisma.ocr_results.upsert({
-        where: {
-          exam_image_id: ocrJob.exam_image_id
-        },
-        update: {
-          ocr_text: ocrText,
-          ai_analysis: aiAnalysis || null,
-          processed_at: new Date(),
-          processing_time_ms: processingTimeMs || null,
-          webhook_status: 'SUCCESS'
-        },
-        create: {
-          exam_image_id: ocrJob.exam_image_id,
-          user_id: ocrJob.user_id,
-          ocr_text: ocrText,
-          ai_analysis: aiAnalysis || null,
-          processed_at: new Date(),
-          processing_time_ms: processingTimeMs || null,
-          webhook_status: 'SUCCESS'
-        }
-      })
-
-      // Update exam image with OCR result reference
-      const ocrResult = await prisma.ocr_results.findFirst({
-        where: { exam_image_id: ocrJob.exam_image_id }
-      })
-      
-      if (ocrResult) {
-        await prisma.exam_images.update({
-          where: { id: ocrJob.exam_image_id },
-          data: {
-            ocr_result_id: ocrResult.id
+      try {
+        await prisma.ocr_results.upsert({
+          where: {
+            exam_image_id: ocrJob.exam_image_id
+          },
+          update: {
+            ocr_text: ocrText,
+            ai_analysis: aiAnalysis || null,
+            processed_at: new Date(),
+            processing_time_ms: processingTimeMs || null,
+            webhook_status: 'SUCCESS'
+          },
+          create: {
+            exam_image_id: ocrJob.exam_image_id,
+            user_id: ocrJob.user_id,
+            ocr_text: ocrText,
+            ai_analysis: aiAnalysis || null,
+            processed_at: new Date(),
+            processing_time_ms: processingTimeMs || null,
+            webhook_status: 'SUCCESS'
           }
         })
+
+        // Update exam image with OCR result reference
+        try {
+          const ocrResult = await prisma.ocr_results.findFirst({
+            where: { exam_image_id: ocrJob.exam_image_id }
+          })
+          
+          if (ocrResult) {
+            await prisma.exam_images.update({
+              where: { id: ocrJob.exam_image_id },
+              data: {
+                ocr_result_id: ocrResult.id
+              }
+            })
+          }
+        } catch (updateError) {
+          console.error('Error updating exam image with OCR result reference:', updateError)
+          // Continue without failing the webhook
+        }
+      } catch (dbError) {
+        console.error('Database error while creating/updating OCR result:', dbError)
+        return NextResponse.json({ error: 'Database error' }, { status: 500 })
       }
     }
 
     // Log the webhook event
-    await prisma.job_logs.create({
-      data: {
-        ocr_job_id: parseInt(jobId),
-        event_type: 'webhook_received',
-        log_message: JSON.stringify({
-          status,
-          processingTimeMs,
-          hasOcrText: !!ocrText,
-          hasAiAnalysis: !!aiAnalysis,
-          error: error || null
-        })
-      }
-    })
+    try {
+      await prisma.job_logs.create({
+        data: {
+          ocr_job_id: jobIdInt,
+          event_type: 'webhook_received',
+          log_message: JSON.stringify({
+            status,
+            processingTimeMs,
+            hasOcrText: !!ocrText,
+            hasAiAnalysis: !!aiAnalysis,
+            error: error || null
+          })
+        }
+      })
+    } catch (dbError) {
+      console.error('Database error while creating job log:', dbError)
+      // Continue without failing the webhook
+    }
 
     // If AI analysis is not complete, forward to AI webhook
     if (ocrText && !aiAnalysis && status !== 'error') {
@@ -112,23 +160,31 @@ export async function POST(request: NextRequest) {
         })
 
         if (aiResponse.ok) {
-          await prisma.job_logs.create({
-            data: {
-              ocr_job_id: parseInt(jobId),
-              event_type: 'ai_webhook_sent',
-              log_message: 'AI analysis request sent successfully'
-            }
-          })
+          try {
+            await prisma.job_logs.create({
+              data: {
+                ocr_job_id: jobIdInt,
+                event_type: 'ai_webhook_sent',
+                log_message: 'AI analysis request sent successfully'
+              }
+            })
+          } catch (logError) {
+            console.error('Error logging AI webhook success:', logError)
+          }
         }
       } catch (aiError) {
         console.error('AI webhook error:', aiError)
-        await prisma.job_logs.create({
-          data: {
-            ocr_job_id: parseInt(jobId),
-            event_type: 'ai_webhook_error',
-            log_message: `Failed to send to AI webhook: ${aiError}`
-          }
-        })
+        try {
+          await prisma.job_logs.create({
+            data: {
+              ocr_job_id: jobIdInt,
+              event_type: 'ai_webhook_error',
+              log_message: `Failed to send to AI webhook: ${aiError}`
+            }
+          })
+        } catch (logError) {
+          console.error('Error logging AI webhook error:', logError)
+        }
       }
     }
 
@@ -139,23 +195,6 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('Webhook processing error:', error)
-    
-    // Try to log the error if we have a job ID
-    try {
-      const { jobId } = await request.json()
-      if (jobId) {
-        await prisma.job_logs.create({
-          data: {
-            ocr_job_id: parseInt(jobId),
-            event_type: 'webhook_error',
-            log_message: `Webhook processing error: ${error}`
-          }
-        })
-      }
-    } catch (logError) {
-      console.error('Failed to log webhook error:', logError)
-    }
-
     return NextResponse.json({ 
       error: 'Internal server error' 
     }, { status: 500 })
@@ -163,7 +202,7 @@ export async function POST(request: NextRequest) {
 }
 
 // Handle webhook verification (GET request)
-export async function GET(request: NextRequest) {
+export async function GET() {
   return NextResponse.json({ 
     status: 'webhook_endpoint_active',
     message: 'EduGradeLab webhook endpoint is running'

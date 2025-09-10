@@ -3,10 +3,13 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Script from 'next/script'
+import Link from 'next/link'
 
 declare global {
   interface Window {
-    grecaptcha: any
+    grecaptcha: {
+      execute: (siteKey: string, options: { action: string }) => Promise<string>
+    }
   }
 }
 
@@ -35,10 +38,16 @@ export default function DemoLogin() {
     
     try {
       // reCAPTCHA v3 token al
-      const token = await window.grecaptcha.execute(
-        process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!,
-        { action: 'demo_login' }
-      )
+      let token
+      try {
+        token = await window.grecaptcha.execute(
+          process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!,
+          { action: 'demo_login' }
+        )
+      } catch (recaptchaError) {
+        console.error('reCAPTCHA error:', recaptchaError)
+        throw new Error('Güvenlik kontrolü başarısız')
+      }
 
       // Token'ı backend'e gönder ve doğrula
       const response = await fetch('/api/verify-recaptcha', {
@@ -53,11 +62,12 @@ export default function DemoLogin() {
         // Başarılı ise demo home sayfasına yönlendir
         router.push('/demohome')
       } else {
-        throw new Error('Güvenlik doğrulaması başarısız')
+        const errorData = await response.json().catch(() => ({ error: 'Bilinmeyen hata' }))
+        throw new Error(errorData.error || 'Güvenlik doğrulaması başarısız')
       }
     } catch (error) {
       console.error('Login error:', error)
-      alert('Giriş sırasında bir hata oluştu. Lütfen tekrar deneyin.')
+      alert('Giriş sırasında bir hata oluştu: ' + (error as Error).message)
     } finally {
       setIsLoading(false)
     }
@@ -68,6 +78,13 @@ export default function DemoLogin() {
     
     if (!email || !name) {
       alert('Lütfen tüm alanları doldurun.')
+      return
+    }
+
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email)) {
+      alert('Lütfen geçerli bir e-posta adresi girin.')
       return
     }
 
@@ -86,11 +103,12 @@ export default function DemoLogin() {
         setEmail('')
         setName('')
       } else {
-        throw new Error('E-posta kaydedilemedi')
+        const errorData = await response.json().catch(() => ({ error: 'Bilinmeyen hata' }))
+        throw new Error(errorData.error || 'E-posta kaydedilemedi')
       }
     } catch (error) {
       console.error('Email save error:', error)
-      alert('E-posta kaydedilirken bir hata oluştu.')
+      alert('E-posta kaydedilirken bir hata oluştu: ' + (error as Error).message)
     }
   }
 
@@ -138,12 +156,12 @@ export default function DemoLogin() {
               İletişim Bilgilerini Kaydet
             </button>
 
-            <a
+            <Link
               href="/"
               className="w-full block text-center text-gray-500 hover:text-gray-700 py-2"
             >
               Ana Sayfaya Dön
-            </a>
+            </Link>
           </div>
 
           <div className="mt-6 text-center">
