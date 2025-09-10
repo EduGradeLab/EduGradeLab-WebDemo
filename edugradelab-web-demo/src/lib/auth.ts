@@ -36,19 +36,24 @@ export async function getOrCreateDemoUser(sessionToken: string, clientIP: string
 
 // Request'ten kullanıcı bilgilerini al
 export async function getUserFromRequest(request: NextRequest) {
-  const sessionToken = request.headers.get('x-session-token') || 
-                      request.cookies.get('session_token')?.value
-  
-  if (!sessionToken) {
+  try {
+    const sessionToken = request.headers.get('x-session-token') || 
+                        request.cookies.get('session_token')?.value
+    
+    if (!sessionToken) {
+      return null
+    }
+
+    // Client IP'yi al
+    const clientIP = request.headers.get('x-forwarded-for') || 
+                     request.headers.get('x-real-ip') || 
+                     'unknown'
+
+    return await getOrCreateDemoUser(sessionToken, clientIP)
+  } catch (error) {
+    console.error('Error getting user from request:', error)
     return null
   }
-
-  // Client IP'yi al
-  const clientIP = request.headers.get('x-forwarded-for') || 
-                   request.headers.get('x-real-ip') || 
-                   'unknown'
-
-  return await getOrCreateDemoUser(sessionToken, clientIP)
 }
 
 // Request'e kullanıcı bilgilerini ekle

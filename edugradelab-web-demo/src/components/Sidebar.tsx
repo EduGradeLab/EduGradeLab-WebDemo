@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 
 interface SidebarProps {
   activePage: 'home' | 'document' | 'features'
@@ -10,7 +9,6 @@ interface SidebarProps {
 
 export default function Sidebar({ activePage }: SidebarProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const router = useRouter()
 
   const menuItems = [
     { id: 'home', label: 'Ana Sayfa', href: '/demohome', icon: '📊' },

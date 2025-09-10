@@ -1,58 +1,82 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { getUserFromRequest } from '@/lib/auth'
 
-export async function GET(request: NextRequest) {
+// Define type for OCR results
+interface OcrResult {
+  id: number
+  exam_image_id: number
+  user_id: number
+  ocr_text: string | null
+  ai_analysis: string | null
+  processed_at: Date
+  processing_time_ms: number | null
+  webhook_status: string
+  webhook_response: string | null
+  feedback: string | null
+}
+
+export async function GET(request: Request) {
   try {
-    const user = await getUserFromRequest(request)
-    
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    const { searchParams } = new URL(request.url)
+    const limit = Math.min(10, Math.max(1, parseInt(searchParams.get('limit') || '5', 10)))
 
-    // Get recent results for the user
+    // Get recent exam images
     const recentResults = await prisma.exam_images.findMany({
-      where: {
-        user_id: user.id
-      },
       orderBy: {
         upload_time: 'desc'
       },
-      take: 10 // Last 10 results
+      take: limit
     })
+
+    if (!recentResults.length) {
+      return NextResponse.json({ 
+        message: 'No recent results found',
+        data: [],
+        total: 0
+      })
+    }
 
     // Get OCR results for each document separately
     const documentIds = recentResults.map(doc => doc.id)
-    const ocrResults = await prisma.ocr_results.findMany({
-      where: {
-        exam_image_id: {
-          in: documentIds
+    let ocrResults: OcrResult[] = []
+    
+    try {
+      ocrResults = await prisma.ocr_results.findMany({
+        where: {
+          exam_image_id: {
+            in: documentIds
+          }
         }
-      }
-    })
+      })
+    } catch (error) {
+      console.error('Error fetching OCR results:', error)
+      return NextResponse.json({ error: 'Failed to fetch OCR results' }, { status: 500 })
+    }
 
-    const formattedResults = recentResults.map((result) => {
+    // Combine exam images with their OCR results
+    const resultsWithOcrData = recentResults.map(result => {
       const ocrResult = ocrResults.find(r => r.exam_image_id === result.id)
+      
       return {
-        id: result.id.toString(),
+        id: result.id,
         filename: result.filename,
-        uploadTime: result.upload_time.toISOString(),
+        uploadDate: result.upload_time,
         status: result.status,
         ocrText: ocrResult?.ocr_text,
         aiAnalysis: ocrResult?.ai_analysis,
-        score: ocrResult?.ai_analysis 
-          ? Math.floor(Math.random() * 30) + 70 // Mock score for demo
-          : undefined
+        score: ocrResult?.ai_analysis
+          ? JSON.parse(ocrResult.ai_analysis).score || null
+          : null
       }
     })
 
     return NextResponse.json({
-      success: true,
-      results: formattedResults
+      message: 'Recent results fetched successfully',
+      data: resultsWithOcrData,
+      total: resultsWithOcrData.length
     })
-
   } catch (error) {
-    console.error('Recent results error:', error)
+    console.error('Database error in recent-results:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

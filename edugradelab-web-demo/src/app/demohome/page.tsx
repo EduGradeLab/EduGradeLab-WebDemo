@@ -37,15 +37,31 @@ export default function DemoHome() {
       if (response.ok) {
         const data = await response.json()
         setRecentResults(data.results || [])
+      } else {
+        const errorData = await response.json().catch(() => ({ error: 'Bilinmeyen hata' }))
+        console.error('API error:', errorData.error)
       }
     } catch (error) {
       console.error('Results load error:', error)
+      // Show user-friendly error without breaking the UI
     }
   }
 
   const handleFileSelect = async (file: File) => {
+    if (!file) {
+      alert('Geçerli bir dosya seçin.')
+      return
+    }
+
     if (file.size > 10 * 1024 * 1024) {
       alert('Dosya boyutu 10MB\'dan büyük olamaz.')
+      return
+    }
+
+    // Check file type
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'application/pdf']
+    if (!allowedTypes.includes(file.type)) {
+      alert('Desteklenmeyen dosya türü. Lütfen resim veya PDF dosyası seçin.')
       return
     }
 
@@ -83,7 +99,7 @@ export default function DemoHome() {
       clearInterval(progressInterval)
 
       if (response.ok) {
-        const result = await response.json()
+        await response.json() // Parse response but don't store since we're using simulated progress
         
         setUploadProgress({
           progress: 100,
@@ -111,7 +127,8 @@ export default function DemoHome() {
         }, 4000)
 
       } else {
-        throw new Error('Dosya yüklenemedi')
+        const errorData = await response.json().catch(() => ({ error: 'Bilinmeyen hata' }))
+        throw new Error(errorData.error || 'Dosya yükleme başarısız')
       }
     } catch (error) {
       console.error('Upload error:', error)

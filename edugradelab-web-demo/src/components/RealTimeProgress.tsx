@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react'
 
 interface RealTimeProgressProps {
   jobId: string
-  onProgressUpdate?: (progress: any) => void
-  onComplete?: (result: any) => void
+  onProgressUpdate?: (progress: unknown) => void
+  onComplete?: (result: unknown) => void
   onError?: (error: string) => void
 }
 
@@ -14,7 +14,7 @@ interface ProgressData {
   progress: number
   message: string
   timestamp: string
-  data?: any
+  data?: Record<string, unknown>
 }
 
 export default function RealTimeProgress({ 
