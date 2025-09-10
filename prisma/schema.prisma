@@ -1,0 +1,101 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model users {
+  id             Int      @id @default(autoincrement())
+  session_token  String   @unique
+  ip_address     String?
+  created_at     DateTime @default(now())
+  last_active_at DateTime @default(now()) @updatedAt
+  is_demo_user   Boolean  @default(true)
+
+  @@map("users")
+}
+
+model exam_images {
+  id            Int             @id @default(autoincrement())
+  user_id       Int
+  image_blob    Bytes
+  filename      String          @db.VarChar(255)
+  filetype      String          @db.VarChar(32)
+  upload_time   DateTime        @default(now())
+  status        ExamImageStatus @default(UPLOADED)
+  ocr_result_id Int?
+  error_message String?         @db.VarChar(512)
+
+  @@map("exam_images")
+}
+
+model ocr_jobs {
+  id            Int          @id @default(autoincrement())
+  user_id       Int
+  exam_image_id Int          @unique
+  status        OCRJobStatus @default(WAITING)
+  webhook_id    String?      @db.VarChar(64)
+  created_at    DateTime     @default(now())
+  updated_at    DateTime     @updatedAt
+
+  @@map("ocr_jobs")
+}
+
+model ocr_results {
+  id                 Int           @id @default(autoincrement())
+  exam_image_id      Int           @unique
+  user_id            Int
+  ocr_text           String?       @db.LongText
+  ai_analysis        String?       @db.LongText
+  processed_at       DateTime      @default(now())
+  processing_time_ms Int?
+  webhook_status     WebhookStatus @default(WAITING)
+  webhook_response   String?       @db.LongText
+  feedback           String?       @db.LongText
+
+  @@map("ocr_results")
+}
+
+model job_logs {
+  id          Int      @id @default(autoincrement())
+  ocr_job_id  Int
+  event_type  String   @db.VarChar(32)
+  log_message String?  @db.LongText
+  created_at  DateTime @default(now())
+
+  @@map("job_logs")
+}
+
+model demo_emails {
+  id         Int      @id @default(autoincrement())
+  user_id    Int?
+  email      String?  @unique @db.VarChar(255)
+  name       String?  @db.VarChar(255)
+  created_at DateTime @default(now())
+
+  @@map("demo_emails")
+}
+
+enum ExamImageStatus {
+  UPLOADED
+  PROCESSING
+  PROCESSED
+  ERROR
+}
+
+enum OCRJobStatus {
+  WAITING
+  PROCESSING
+  DONE
+  ERROR
+}
+
+enum WebhookStatus {
+  WAITING
+  SUCCESS
+  FAIL
+}

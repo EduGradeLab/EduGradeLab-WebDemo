@@ -1,36 +1,149 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# EduGradeLab Web Demo
 
-## Getting Started
+AI destekli sınav analizi platformu demo uygulaması.
 
-First, run the development server:
+## Özellikler
+
+- ✅ **Next.js 14+** App Router ile modern React uygulaması
+- ✅ **Tailwind CSS** Responsive ve modern tasarım
+- ✅ **TypeScript** Tip güvenliği
+- ✅ **Prisma ORM** MySQL veritabanı entegrasyonu
+- ✅ **Demo Oturum Yönetimi** IP tabanlı kullanıcı kimliği
+- ✅ **reCAPTCHA v3** Bot koruması
+- ✅ **Dosya Yükleme** Drag & drop ile çoklu format desteği
+- ✅ **Gerçek Zamanlı İlerleme** SSE/Polling ile canlı takip
+- ✅ **Webhook Entegrasyonu** n8n ile dış servis bağlantısı
+- ✅ **Responsive Tasarım** Mobil uyumlu arayüz
+- ✅ **Güvenlik Başlıkları** CSP ve güvenlik önlemleri
+
+## Kurulum
+
+### Gereksinimler
+
+- Node.js 18+ 
+- MySQL veritabanı
+- npm veya yarn
+
+### Adımlar
+
+1. **Projeyi klonlayın:**
+   ```bash
+   git clone <repository-url>
+   cd edugradelab-web-demo
+   ```
+
+2. **Bağımlılıkları yükleyin:**
+   ```bash
+   npm install
+   ```
+
+3. **Çevre değişkenlerini yapılandırın:**
+   ```bash
+   cp .env.local.example .env.local
+   ```
+   `.env.local` dosyasını düzenleyin:
+   ```env
+   DATABASE_URL="mysql://username:password@localhost:3306/exam_ai_demo"
+   WEBHOOK_SCANNER_URL="https://your-scanner-service.com/webhook"
+   WEBHOOK_AI_URL="https://your-ai-service.com/webhook"
+   NEXT_PUBLIC_RECAPTCHA_SITE_KEY="your-recaptcha-site-key"
+   RECAPTCHA_SECRET_KEY="your-recaptcha-secret-key"
+   NEXTAUTH_SECRET="your-nextauth-secret"
+   ```
+
+4. **Veritabanını kurun:**
+   ```bash
+   npx prisma generate
+   npx prisma db push
+   ```
+
+5. **Geliştirme sunucusunu başlatın:**
+   ```bash
+   npm run dev
+   ```
+
+6. **Uygulamayı açın:**
+   Tarayıcınızda `http://localhost:3000` adresini açın.
+
+## Kullanım
+
+### Demo Akışı
+
+1. **Ana Sayfa** (`/`) - Platform tanıtımı
+2. **Demo Giriş** (`/demologin`) - reCAPTCHA ile güvenli giriş
+3. **Ana Panel** (`/demohome`) - Dosya yükleme ve sonuçlar
+4. **Belgeler** (`/document`) - Tüm analiz sonuçları
+5. **Özellikler** (`/features`) - Mevcut ve gelecek özellikler
+
+### API Endpoints
+
+- `POST /api/upload` - Dosya yükleme
+- `GET /api/documents` - Belgeleri listeleme
+- `POST /api/webhook` - Webhook için OCR sonuçları
+- `GET /api/progress/[jobId]` - İşlem ilerlemesi
+- `POST /api/verify-recaptcha` - reCAPTCHA doğrulama
+
+## Veritabanı Şeması
+
+Projede aşağıdaki tablolar bulunur:
+
+- `users` - Demo kullanıcıları
+- `exam_images` - Yüklenen sınav görüntüleri
+- `ocr_jobs` - OCR işleri ve kuyruk
+- `ocr_results` - OCR sonuçları ve AI analizi
+- `job_logs` - İşlem logları
+- `demo_emails` - Demo e-posta kayıtları
+
+## Webhook Entegrasyonu
+
+Uygulama, n8n workflow'ları ile entegre çalışır:
+
+1. **Scanner Webhook** - Görüntüleri OCR servisine gönderir
+2. **AI Webhook** - OCR sonuçlarını AI analizi için işler
+3. **Result Webhook** - Analiz sonuçlarını alır ve veritabanına kaydeder
+
+## Güvenlik
+
+- reCAPTCHA v3 bot koruması
+- CSP (Content Security Policy) başlıkları
+- IP tabanlı oturum yönetimi
+- Dosya boyutu ve tip validasyonu
+- SQL injection koruması (Prisma ORM)
+
+## Performans Optimizasyonları
+
+- Next.js App Router ile sunucu tarafı render
+- Image optimization ve lazy loading
+- Bundle splitting ve code splitting
+- Caching başlıkları
+- Responsive image loading
+
+## Deployment
+
+### Vercel (Tavsiye edilen)
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run build
+npm run start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Environment Variables
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Production için gerekli değişkenler:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```env
+DATABASE_URL="mysql://user:pass@host:3306/db"
+WEBHOOK_SCANNER_URL="https://production-scanner.com/webhook"
+WEBHOOK_AI_URL="https://production-ai.com/webhook"
+NEXT_PUBLIC_RECAPTCHA_SITE_KEY="production-site-key"
+RECAPTCHA_SECRET_KEY="production-secret-key"
+NEXTAUTH_SECRET="production-secret"
+```
 
-## Learn More
+## Lisans
 
-To learn more about Next.js, take a look at the following resources:
+Bu proje demo amaçlıdır. EduGradeLab tarafından geliştirilmiştir.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Destek
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Sorunlar veya öneriler için lütfen GitHub issues bölümünü kullanın.
