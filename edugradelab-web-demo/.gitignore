@@ -41,7 +41,11 @@ yarn-error.log*
 next-env.d.ts
 
 /src/generated/prisma
+<<<<<<< Updated upstream
 
 .claude
 copilot-rules.md
 /EduGradeLab-WebDemo/copilot-rules.md
+=======
+/copilot-rules.md
+>>>>>>> Stashed changes
