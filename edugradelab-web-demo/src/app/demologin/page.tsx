@@ -20,6 +20,7 @@ export default function DemoLogin() {
   const [message, setMessage] = useState('')
   const [messageType, setMessageType] = useState<'success' | 'error' | 'info'>('info')
   const [isReCaptchaLoaded, setIsReCaptchaLoaded] = useState(false)
+  const [isPageReady, setIsPageReady] = useState(false)
   const router = useRouter()
 
   // Add environment-aware debug logging
@@ -33,11 +34,25 @@ export default function DemoLogin() {
 
   useEffect(() => {
     debugLog('Component mounted, environment:', process.env.NODE_ENV)
+    // Page hazır olduğunda state'i güncelle
+    setIsPageReady(true)
+    
+    // reCAPTCHA configuration test
+    if (isDev) {
+      debugLog('reCAPTCHA Site Key:', process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY?.substring(0, 10) + '...')
+    }
   }, [])
 
   const handleReCaptchaLoad = () => {
     debugLog('reCAPTCHA script loaded successfully')
     setIsReCaptchaLoaded(true)
+    
+    // Test reCAPTCHA ready durumu
+    if (window.grecaptcha) {
+      window.grecaptcha.ready(() => {
+        debugLog('reCAPTCHA is ready for execution')
+      })
+    }
   }
 
   const generateReCaptchaToken = async (): Promise<string> => {
@@ -48,11 +63,11 @@ export default function DemoLogin() {
         debugLog('reCAPTCHA timeout - using fallback for development')
         // Development fallback - use test token
         if (isDev) {
-          resolve('dev-test-token-' + Date.now())
+          resolve('dev-timeout-fallback-' + Date.now())
         } else {
           reject(new Error('reCAPTCHA timeout'))
         }
-      }, 10000)
+      }, 15000) // 15 saniye timeout
 
       if (!window.grecaptcha) {
         debugLog('grecaptcha not available, using fallback')
@@ -68,9 +83,18 @@ export default function DemoLogin() {
       try {
         window.grecaptcha.ready(() => {
           debugLog('grecaptcha ready, executing...')
-          const siteKey = isDev 
-            ? '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI'  // Test key for localhost
-            : process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''
+          const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''
+          
+          if (!siteKey) {
+            debugLog('No site key configured')
+            clearTimeout(timeout)
+            if (isDev) {
+              resolve('dev-no-sitekey-' + Date.now())
+            } else {
+              reject(new Error('reCAPTCHA site key not configured'))
+            }
+            return
+          }
           
           debugLog('Using site key:', siteKey.substring(0, 10) + '...')
           
@@ -151,11 +175,15 @@ export default function DemoLogin() {
       debugLog('Backend response data:', verifyResult)
 
       if (!verifyResponse.ok || !verifyResult.success) {
-        throw new Error(verifyResult.message || 'Güvenlik doğrulaması başarısız')
+        if (verifyResult.score !== undefined) {
+          throw new Error(`Güvenlik skoru çok düşük (${verifyResult.score.toFixed(2)}). Bot olarak algılandınız.`)
+        }
+        throw new Error(verifyResult.error || 'Güvenlik doğrulaması başarısız. Lütfen tekrar deneyin.')
       }
 
       // Success
-      setMessage('✅ Güvenlik doğrulaması başarılı! Demo sayfasına yönlendiriliyorsunuz...')
+      const scoreText = verifyResult.score ? ` (Skor: ${verifyResult.score.toFixed(2)})` : ''
+      setMessage(`✅ Güvenlik doğrulaması başarılı!${scoreText} Demo sayfasına yönlendiriliyorsunuz...`)
       setMessageType('success')
       
       debugLog('Login successful, redirecting to demo home')
@@ -176,7 +204,7 @@ export default function DemoLogin() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex items-center justify-center p-4">
       {/* reCAPTCHA Script */}
       <Script 
-        src={`https://www.google.com/recaptcha/api.js?render=${isDev ? '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI' : process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`}
+        src={`https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`}
         onLoad={handleReCaptchaLoad}
         strategy="afterInteractive"
       />
@@ -255,7 +283,7 @@ export default function DemoLogin() {
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={isSubmitting || !email.trim()}
+              disabled={isSubmitting || !email.trim() || !isPageReady}
               className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-6 rounded-xl font-semibold hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0"
             >
               {isSubmitting ? (
@@ -263,9 +291,17 @@ export default function DemoLogin() {
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                   <span>Giriş Yapılıyor...</span>
                 </div>
+              ) : !isPageReady ? (
+                <div className="flex items-center justify-center space-x-2">
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  <span>Güvenlik Sistemi Yükleniyor...</span>
+                </div>
               ) : (
                 <div className="flex items-center justify-center space-x-2">
                   <span>🚀 Demo Başlat</span>
+                  {isReCaptchaLoaded && (
+                    <span className="text-xs opacity-80">(Güvenlik Korumalı)</span>
+                  )}
                 </div>
               )}
             </button>
@@ -276,7 +312,11 @@ export default function DemoLogin() {
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                 </svg>
-                <span>reCAPTCHA ile güvenlik koruması</span>
+                <span>
+                  {isReCaptchaLoaded 
+                    ? 'reCAPTCHA v3 güvenlik koruması aktif' 
+                    : 'Güvenlik sistemi yükleniyor...'}
+                </span>
               </p>
             </div>
           </form>

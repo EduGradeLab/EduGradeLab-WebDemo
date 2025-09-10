@@ -18,31 +18,32 @@ export async function POST(request: NextRequest) {
     
     const secretKey = process.env.RECAPTCHA_SECRET_KEY
     const isProduction = process.env.NODE_ENV === 'production'
-    const isTestKey = secretKey === '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'
     
     if (!secretKey) {
       console.error('reCAPTCHA secret key not configured')
       return NextResponse.json({ error: 'reCAPTCHA not configured' }, { status: 500 })
     }
 
-    // Development/localhost için test key kontrolü
-    if (!isProduction && isTestKey) {
-      console.log('Development mode: using test reCAPTCHA key')
-      
-      // Test fallback token kontrolü
-      if (token.startsWith('test-fallback-token-')) {
-        console.log('Test fallback token detected, bypassing reCAPTCHA verification')
-        return NextResponse.json({ 
-          success: true, 
-          score: 0.9,
-          environment: 'development',
-          fallback: true
-        })
-      }
+    console.log('Processing reCAPTCHA verification...')
+    if (!isProduction) {
+      console.log('Environment: development')
+      console.log('Token received:', token.substring(0, 20) + '...')
+    }
+
+    // Development fallback token kontrolü
+    if (!isProduction && token.startsWith('dev-')) {
+      console.log('Development fallback token detected, bypassing reCAPTCHA verification')
+      return NextResponse.json({ 
+        success: true, 
+        score: 0.9,
+        environment: 'development',
+        fallback: true
+      })
     }
 
     // reCAPTCHA v3 verification
     try {
+      console.log('Calling Google reCAPTCHA API...')
       const verificationResponse = await fetch(
         'https://www.google.com/recaptcha/api/siteverify',
         {
@@ -59,14 +60,18 @@ export async function POST(request: NextRequest) {
       }
 
       const verificationData = await verificationResponse.json()
-      console.log('reCAPTCHA verification result:', verificationData)
+      if (!isProduction) {
+        console.log('reCAPTCHA verification result:', verificationData)
+      }
 
       if (verificationData.success) {
         // Score kontrolü (ortam tabanlı threshold)
         const score = verificationData.score || 0.0
-        const threshold = (!isProduction && isTestKey) ? 0.1 : 0.3 // Test key için daha düşük threshold
+        const threshold = isProduction ? 0.5 : 0.3 // Production'da daha yüksek threshold
         
-        console.log(`reCAPTCHA score: ${score}, threshold: ${threshold}, isProduction: ${isProduction}`)
+        if (!isProduction) {
+          console.log(`reCAPTCHA score: ${score}, threshold: ${threshold}`)
+        }
         
         if (score >= threshold) {
           return NextResponse.json({ 
@@ -76,20 +81,21 @@ export async function POST(request: NextRequest) {
           })
         } else {
           return NextResponse.json({ 
-            error: 'Security verification failed', 
+            error: 'Güvenlik skoru çok düşük. Lütfen tekrar deneyin.', 
             score: score,
             threshold: threshold
           }, { status: 403 })
         }
       } else {
+        console.error('reCAPTCHA verification failed:', verificationData['error-codes'])
         return NextResponse.json({ 
-          error: 'reCAPTCHA verification failed',
+          error: 'Bot koruması başarısız. Lütfen sayfayı yenileyin.',
           'error-codes': verificationData['error-codes'] || []
         }, { status: 400 })
       }
     } catch (fetchError) {
       console.error('Error calling reCAPTCHA API:', fetchError)
-      return NextResponse.json({ error: 'reCAPTCHA verification error' }, { status: 500 })
+      return NextResponse.json({ error: 'Güvenlik doğrulaması sırasında hata oluştu' }, { status: 500 })
     }
   } catch (error) {
     console.error('reCAPTCHA API error:', error)
