@@ -6,7 +6,7 @@ interface ProgressData {
   progress: number
   message: string
   timestamp: string
-  data?: any
+  data?: unknown
 }
 
 // For demo purposes, we'll simulate progress updates
@@ -63,23 +63,46 @@ export async function GET(
       return NextResponse.json({ error: 'Job ID is required' }, { status: 400 })
     }
 
+    let jobIdInt
+    try {
+      jobIdInt = parseInt(jobId)
+      if (isNaN(jobIdInt)) {
+        return NextResponse.json({ error: 'Invalid job ID format' }, { status: 400 })
+      }
+    } catch {
+      return NextResponse.json({ error: 'Invalid job ID' }, { status: 400 })
+    }
+
     // Check if job exists in database
-    const ocrJob = await prisma.ocr_jobs.findUnique({
-      where: { id: parseInt(jobId) }
-    })
+    let ocrJob
+    try {
+      ocrJob = await prisma.ocr_jobs.findUnique({
+        where: { id: jobIdInt }
+      })
+    } catch (dbError) {
+      console.error('Database error while fetching OCR job:', dbError)
+      return NextResponse.json({ error: 'Database error' }, { status: 500 })
+    }
 
     if (!ocrJob) {
       return NextResponse.json({ error: 'Job not found' }, { status: 404 })
     }
 
     // Get exam image and OCR result separately since we don't have relations
-    const examImage = await prisma.exam_images.findUnique({
-      where: { id: ocrJob.exam_image_id }
-    })
-
-    const ocrResult = await prisma.ocr_results.findUnique({
-      where: { exam_image_id: ocrJob.exam_image_id }
-    })
+    let examImage, ocrResult
+    try {
+      [examImage, ocrResult] = await Promise.all([
+        prisma.exam_images.findUnique({
+          where: { id: ocrJob.exam_image_id }
+        }),
+        prisma.ocr_results.findUnique({
+          where: { exam_image_id: ocrJob.exam_image_id }
+        })
+      ])
+    } catch (dbError) {
+      console.error('Database error while fetching related data:', dbError)
+      return NextResponse.json({ error: 'Database error' }, { status: 500 })
+    }
 
     // For demo, simulate progress
     // In production, you would return the actual job status
