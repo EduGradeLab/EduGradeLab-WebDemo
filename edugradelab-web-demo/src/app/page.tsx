@@ -57,6 +57,11 @@ export default function Home() {
               </button>
             </Link>
           </div>
+          <div className="mb-8">
+            <p className="text-sm text-gray-500 max-w-md mx-auto">
+              Demo için sadece reCAPTCHA doğrulaması gereklidir. Email opsiyoneldir.
+            </p>
+          </div>
 
           {/* Hero Visual */}
           <div className="relative mx-auto max-w-4xl">

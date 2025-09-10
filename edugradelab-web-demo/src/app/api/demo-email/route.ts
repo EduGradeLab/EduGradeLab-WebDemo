@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { getUserFromRequest } from '@/lib/auth'
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,8 +14,8 @@ export async function POST(request: NextRequest) {
 
     const { email, name } = body
     
-    if (!email || !name) {
-      return NextResponse.json({ error: 'Email and name required' }, { status: 400 })
+    if (!email) {
+      return NextResponse.json({ error: 'Email required' }, { status: 400 })
     }
 
     // Basic email validation
@@ -23,21 +24,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid email format' }, { status: 400 })
     }
 
-    const userId = request.headers.get('x-user-id')
-    
-    if (!userId) {
-      return NextResponse.json({ error: 'User not authenticated' }, { status: 401 })
-    }
-
-    let userIdInt
-    try {
-      userIdInt = parseInt(userId)
-      if (isNaN(userIdInt)) {
-        return NextResponse.json({ error: 'Invalid user ID' }, { status: 400 })
-      }
-    } catch {
-      return NextResponse.json({ error: 'Invalid user ID format' }, { status: 400 })
-    }
+    // Session tabanlı kullanıcı bilgisi al
+    const user = await getUserFromRequest(request)
+    const userId = user?.id || null
 
     // Check if email already exists
     try {
@@ -46,7 +35,11 @@ export async function POST(request: NextRequest) {
       })
       
       if (existingEmail) {
-        return NextResponse.json({ error: 'Email already registered' }, { status: 409 })
+        return NextResponse.json({ 
+          success: true, 
+          message: 'Email already registered',
+          id: existingEmail.id 
+        })
       }
     } catch (dbError) {
       console.error('Database error while checking existing email:', dbError)
@@ -57,15 +50,16 @@ export async function POST(request: NextRequest) {
     try {
       const demoEmail = await prisma.demo_emails.create({
         data: {
-          user_id: userIdInt,
+          user_id: userId, // null olabilir
           email,
-          name,
+          name: name || email.split('@')[0], // name yoksa email'den türet
         }
       })
 
       return NextResponse.json({ 
         success: true, 
-        id: demoEmail.id 
+        id: demoEmail.id,
+        message: 'Email saved successfully'
       })
     } catch (dbError) {
       console.error('Database error while saving demo email:', dbError)
