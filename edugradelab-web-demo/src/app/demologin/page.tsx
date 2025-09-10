@@ -8,6 +8,7 @@ import Link from 'next/link'
 declare global {
   interface Window {
     grecaptcha: {
+      ready: (callback: () => void) => void
       execute: (siteKey: string, options: { action: string }) => Promise<string>
     }
   }
@@ -21,10 +22,19 @@ export default function DemoLogin() {
   const [recaptchaLoaded, setRecaptchaLoaded] = useState(false)
   const router = useRouter()
 
+  const handleRecaptchaLoad = () => {
+    console.log('reCAPTCHA loaded successfully')
+    setRecaptchaLoaded(true)
+  }
+
   useEffect(() => {
-    // reCAPTCHA yüklendiğinde
+    // reCAPTCHA yüklendiğinde ready callback ile kontrol et
     if (typeof window !== 'undefined' && window.grecaptcha) {
-      setRecaptchaLoaded(true)
+      console.log('reCAPTCHA already available on window')
+      window.grecaptcha.ready(() => {
+        console.log('reCAPTCHA ready callback triggered')
+        setRecaptchaLoaded(true)
+      })
     }
   }, [])
 
@@ -40,10 +50,22 @@ export default function DemoLogin() {
       // reCAPTCHA v3 token al
       let token
       try {
+        if (!process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY) {
+          throw new Error('reCAPTCHA site key not configured')
+        }
+
+        await new Promise<void>((resolve) => {
+          window.grecaptcha.ready(() => resolve())
+        })
+
         token = await window.grecaptcha.execute(
-          process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!,
+          process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY,
           { action: 'demo_login' }
         )
+        
+        if (!token) {
+          throw new Error('reCAPTCHA token not generated')
+        }
       } catch (recaptchaError) {
         console.error('reCAPTCHA error:', recaptchaError)
         throw new Error('Güvenlik kontrolü başarısız')
@@ -141,12 +163,31 @@ export default function DemoLogin() {
           </div>
 
           <div className="space-y-4">
-            <button
+            {!process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY && (
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-sm text-yellow-800">
+                ⚠️ reCAPTCHA yapılandırması eksik. Demo modda çalışıyor.
+              </div>
+            )}
+            
+                        <button
               onClick={handleDemoLogin}
-              disabled={isLoading}
-              className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={isLoading || !recaptchaLoaded}
+              className={`w-full text-white py-3 px-4 rounded-lg font-semibold transition-colors ${
+                isLoading || !recaptchaLoaded
+                  ? 'bg-gray-400 cursor-not-allowed'
+                  : 'bg-blue-600 hover:bg-blue-700'
+              }`}
             >
-              {isLoading ? 'Yükleniyor...' : 'Demo Başlat'}
+              {isLoading ? (
+                <div className="flex items-center justify-center">
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                  Giriş yapılıyor...
+                </div>
+              ) : !recaptchaLoaded ? (
+                'Güvenlik kontrolü yükleniyor...'
+              ) : (
+                'Demo Girişi Yap'
+              )}
             </button>
 
             <button
@@ -227,6 +268,19 @@ export default function DemoLogin() {
             </form>
           </div>
         </div>
+      )}
+
+      {/* reCAPTCHA v3 Script */}
+      {process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY && (
+        <Script
+          src={`https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`}
+          strategy="lazyOnload"
+          onLoad={handleRecaptchaLoad}
+          onError={() => {
+            console.error('reCAPTCHA script failed to load')
+            setRecaptchaLoaded(false)
+          }}
+        />
       )}
     </div>
   )

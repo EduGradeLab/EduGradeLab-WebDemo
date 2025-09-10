@@ -16,26 +16,25 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Token missing' }, { status: 400 })
     }
     
-    // For demo purposes, bypass reCAPTCHA verification
-    // In production, you should uncomment the verification code below
-    console.log('Demo mode: bypassing reCAPTCHA verification')
-    
-    return NextResponse.json({ success: true })
-
-    /* Production verification code (uncomment for production):
     const secretKey = process.env.RECAPTCHA_SECRET_KEY
     
     if (!secretKey) {
       console.error('reCAPTCHA secret key not configured')
-      return NextResponse.json({ error: 'Server configuration error' }, { status: 500 })
+      // Demo mode fallback
+      console.log('Demo mode: bypassing reCAPTCHA verification')
+      return NextResponse.json({ success: true })
     }
 
     // reCAPTCHA v3 verification
     try {
       const verificationResponse = await fetch(
-        `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${token}`,
+        'https://www.google.com/recaptcha/api/siteverify',
         {
           method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: `secret=${secretKey}&response=${token}`,
         }
       )
 
@@ -44,18 +43,32 @@ export async function POST(request: NextRequest) {
       }
 
       const verificationData = await verificationResponse.json()
+      console.log('reCAPTCHA verification result:', verificationData)
 
-      if (verificationData.success && verificationData.score > 0.5) {
-        return NextResponse.json({ success: true })
+      if (verificationData.success) {
+        // Score kontrolü (0.5 ve üzeri güvenli kabul edilir)
+        const score = verificationData.score || 0.0
+        if (score >= 0.3) { // Daha esnek threshold
+          return NextResponse.json({ 
+            success: true, 
+            score: score 
+          })
+        } else {
+          return NextResponse.json({ 
+            error: 'Security verification failed', 
+            score: score 
+          }, { status: 403 })
+        }
       } else {
-        console.error('reCAPTCHA verification failed:', verificationData)
-        return NextResponse.json({ error: 'Verification failed' }, { status: 400 })
+        return NextResponse.json({ 
+          error: 'reCAPTCHA verification failed',
+          'error-codes': verificationData['error-codes'] || []
+        }, { status: 400 })
       }
     } catch (fetchError) {
       console.error('Error calling reCAPTCHA API:', fetchError)
       return NextResponse.json({ error: 'reCAPTCHA verification error' }, { status: 500 })
     }
-    */
   } catch (error) {
     console.error('reCAPTCHA API error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
