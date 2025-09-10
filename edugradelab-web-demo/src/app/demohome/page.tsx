@@ -164,7 +164,7 @@ export default function DemoHome() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
-      <Sidebar activePage="home" />
+      <Sidebar activePage="upload" />
       
       <div className="lg:ml-64 p-4 lg:p-8">
         <div className="max-w-7xl mx-auto">
@@ -197,7 +197,7 @@ export default function DemoHome() {
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900">Hızlı Yükleme</h3>
-                    <p className="text-sm text-gray-600">10MB'a kadar dosya</p>
+                    <p className="text-sm text-gray-600">10MB&apos;a kadar dosya</p>
                   </div>
                 </div>
               </div>

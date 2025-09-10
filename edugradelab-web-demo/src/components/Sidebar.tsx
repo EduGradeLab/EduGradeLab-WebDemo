@@ -2,18 +2,34 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 
 interface SidebarProps {
-  activePage: 'home' | 'document' | 'features'
+  activePage?: 'upload' | 'documents'
 }
 
 export default function Sidebar({ activePage }: SidebarProps) {
+  const pathname = usePathname()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  
+  // activePage prop'u yoksa pathname'den belirle
+  const currentPage = activePage || (pathname === '/demohome' ? 'upload' : 'documents')
 
   const menuItems = [
-    { id: 'home', label: 'Ana Sayfa', href: '/demohome', icon: '📊' },
-    { id: 'document', label: 'Belgeler', href: '/document', icon: '📄' },
-    { id: 'features', label: 'Özellikler', href: '/features', icon: '⚡' },
+    { 
+      id: 'upload', 
+      label: 'Dosya Yükle', 
+      href: '/demohome', 
+      icon: '📁',
+      description: 'Yeni sınav kağıdı analizi'
+    },
+    { 
+      id: 'documents', 
+      label: 'Dokümanlar', 
+      href: '/demodocument', 
+      icon: '📄',
+      description: 'Geçmiş analizler'
+    },
   ]
 
   return (
@@ -56,43 +72,45 @@ export default function Sidebar({ activePage }: SidebarProps) {
             </div>
           </div>
 
-          <nav className="space-y-2">
+          <nav className="space-y-3">
             {menuItems.map((item) => (
               <Link
                 key={item.id}
                 href={item.href}
                 onClick={() => setIsMobileMenuOpen(false)}
                 className={`
-                  flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors
-                  ${activePage === item.id 
-                    ? 'bg-blue-50 text-blue-600 border-r-2 border-blue-600' 
-                    : 'text-gray-600 hover:bg-gray-50'
+                  group flex items-center space-x-4 px-4 py-4 rounded-xl transition-all duration-200
+                  ${currentPage === item.id 
+                    ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg transform scale-105' 
+                    : 'text-gray-600 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:text-blue-600 hover:shadow-md'
                   }
                 `}
               >
-                <span className="text-lg">{item.icon}</span>
-                <span className="font-medium">{item.label}</span>
+                <div className={`
+                  w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-200
+                  ${currentPage === item.id 
+                    ? 'bg-white bg-opacity-20 shadow-inner' 
+                    : 'bg-gray-100 group-hover:bg-blue-100'
+                  }
+                `}>
+                  <span className="text-xl">{item.icon}</span>
+                </div>
+                <div className="flex-1">
+                  <span className="font-semibold text-lg block">{item.label}</span>
+                  <span className={`text-sm ${
+                    currentPage === item.id ? 'text-blue-100' : 'text-gray-500'
+                  }`}>
+                    {item.description}
+                  </span>
+                </div>
               </Link>
             ))}
           </nav>
-
-          <div className="absolute bottom-6 left-6 right-6">
-            <div className="bg-gray-50 rounded-lg p-4">
-              <p className="text-sm text-gray-600 mb-2">Demo Oturumu</p>
-              <p className="text-xs text-gray-500">
-                Bu demo sürüm test amaçlıdır. Gerçek veriler kullanmayın.
-              </p>
-            </div>
-            
-            <Link
-              href="/"
-              className="mt-4 block text-center text-sm text-gray-500 hover:text-gray-700"
-            >
-              Çıkış Yap
-            </Link>
-          </div>
         </div>
       </div>
+
+      {/* Main Content Spacer for Desktop */}
+      <div className="hidden lg:block w-64 flex-shrink-0" />
     </>
   )
 }
