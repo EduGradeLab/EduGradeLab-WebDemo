@@ -20,11 +20,30 @@ export default function DemoLogin() {
   const [email, setEmail] = useState('')
   const [name, setName] = useState('')
   const [recaptchaLoaded, setRecaptchaLoaded] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const router = useRouter()
 
   const handleRecaptchaLoad = () => {
-    console.log('reCAPTCHA loaded successfully')
-    setRecaptchaLoaded(true)
+    console.log('reCAPTCHA script loaded successfully')
+    
+    // Script yüklendikten sonra grecaptcha ready olana kadar bekle
+    if (window.grecaptcha) {
+      window.grecaptcha.ready(() => {
+        console.log('reCAPTCHA ready and available')
+        setRecaptchaLoaded(true)
+      })
+    } else {
+      console.error('reCAPTCHA script loaded but grecaptcha object not available')
+      // Biraz bekleyip tekrar dene
+      setTimeout(() => {
+        if (window.grecaptcha) {
+          window.grecaptcha.ready(() => {
+            console.log('reCAPTCHA ready after delay')
+            setRecaptchaLoaded(true)
+          })
+        }
+      }, 1000)
+    }
   }
 
   useEffect(() => {
@@ -39,57 +58,130 @@ export default function DemoLogin() {
   }, [])
 
   const handleDemoLogin = async () => {
+    // Error mesajını temizle
+    setError(null)
+    
+    const isProduction = process.env.NODE_ENV === 'production'
+    const isTestKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY === '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI'
+    
+    console.log(`Environment: ${isProduction ? 'production' : 'development'}, Test key: ${isTestKey}`)
+    
     if (!recaptchaLoaded) {
-      alert('Lütfen bekleyin, güvenlik kontrolü yükleniyor...')
+      setError('reCAPTCHA henüz yüklenmedi. Lütfen bekleyin.')
       return
     }
 
     setIsLoading(true)
     
     try {
-      // reCAPTCHA v3 token al
+      // reCAPTCHA v3 token al - BOT KONTROLÜ ZORUNLU
       let token
       try {
         if (!process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY) {
           throw new Error('reCAPTCHA site key not configured')
         }
 
-        await new Promise<void>((resolve) => {
-          window.grecaptcha.ready(() => resolve())
+        if (!window.grecaptcha) {
+          throw new Error('reCAPTCHA not loaded - please refresh the page')
+        }
+
+        console.log('Attempting to get reCAPTCHA token...')
+        console.log('Site key:', process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY)
+        console.log('grecaptcha object:', window.grecaptcha)
+        console.log('Is test key:', isTestKey)
+        console.log('Environment:', isProduction ? 'production' : 'development')
+        
+        // reCAPTCHA ready olana kadar bekle
+        await new Promise<void>((resolve, reject) => {
+          const timeout = setTimeout(() => {
+            reject(new Error('reCAPTCHA ready timeout'))
+          }, 15000) // 15 saniye timeout (daha uzun)
+          
+          window.grecaptcha.ready(() => {
+            clearTimeout(timeout)
+            console.log('reCAPTCHA ready confirmed')
+            resolve()
+          })
         })
 
-        token = await window.grecaptcha.execute(
-          process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY,
-          { action: 'demo_login' }
-        )
+        console.log('Executing reCAPTCHA...')
         
-        if (!token) {
-          throw new Error('reCAPTCHA token not generated')
+        // Birkaç kez deneme mekanizması
+        for (let attempt = 1; attempt <= 3; attempt++) {
+          try {
+            console.log(`reCAPTCHA attempt ${attempt}/3`)
+            
+            token = await window.grecaptcha.execute(
+              process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY,
+              { action: 'demo_login' }
+            )
+            
+            console.log('reCAPTCHA execute result:', typeof token, token ? 'token received' : 'no token')
+            
+            if (token && typeof token === 'string' && token.length > 0) {
+              console.log('reCAPTCHA token generated successfully on attempt', attempt)
+              break
+            }
+            
+            if (attempt < 3) {
+              console.log('No token received, retrying in 1 second...')
+              await new Promise(resolve => setTimeout(resolve, 1000))
+            }
+          } catch (executeError) {
+            console.error(`reCAPTCHA execute attempt ${attempt} failed:`, executeError)
+            if (attempt === 3) throw executeError
+            await new Promise(resolve => setTimeout(resolve, 1000))
+          }
         }
+        
+        if (!token || typeof token !== 'string' || token.length === 0) {
+          // Test environment için fallback
+          if (!isProduction && isTestKey) {
+            console.warn('Test environment: reCAPTCHA token generation failed, proceeding with fallback')
+            token = 'test-fallback-token-' + Date.now() // Test token
+          } else {
+            throw new Error('Failed to generate reCAPTCHA token after 3 attempts')
+          }
+        }
+        
       } catch (recaptchaError) {
         console.error('reCAPTCHA error:', recaptchaError)
-        throw new Error('Güvenlik kontrolü başarısız')
+        // Bot kontrolü ZORUNLU - hata durumunda giriş yapılamaz
+        const errorMessage = !isProduction && isTestKey 
+          ? 'Test ortamında reCAPTCHA hatası. Lütfen sayfa yenilenerek tekrar deneyin.'
+          : 'Bot kontrolü başarısız. Sayfa yenilenerek tekrar deneyin.'
+        throw new Error(errorMessage)
       }
 
-      // Token'ı backend'e gönder ve doğrula
-      const response = await fetch('/api/verify-recaptcha', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ token }),
-      })
+      // reCAPTCHA doğrulaması
+      try {
+        const recaptchaResponse = await fetch('/api/verify-recaptcha', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ token }),
+        })
 
-      if (response.ok) {
-        // Başarılı ise demo home sayfasına yönlendir
-        router.push('/demohome')
-      } else {
-        const errorData = await response.json().catch(() => ({ error: 'Bilinmeyen hata' }))
-        throw new Error(errorData.error || 'Güvenlik doğrulaması başarısız')
+        if (!recaptchaResponse.ok) {
+          const errorData = await recaptchaResponse.json().catch(() => ({ error: 'reCAPTCHA doğrulama hatası' }))
+          throw new Error(errorData.error || 'Güvenlik kontrolü başarısız')
+        }
+
+        const recaptchaData = await recaptchaResponse.json()
+        console.log('reCAPTCHA verification successful:', recaptchaData)
+      } catch (verificationError) {
+        console.error('reCAPTCHA verification error:', verificationError)
+        throw new Error('Güvenlik kontrolü başarısız. Lütfen tekrar deneyin.')
       }
+
+      // Demo girişi başarılı - yönlendir
+      console.log('Demo login successful, redirecting...')
+      window.location.href = '/demohome'
+      
     } catch (error) {
-      console.error('Login error:', error)
-      alert('Giriş sırasında bir hata oluştu: ' + (error as Error).message)
+      console.error('Demo login error:', error)
+      setError(error instanceof Error ? error.message : 'Beklenmeyen bir hata oluştu')
     } finally {
       setIsLoading(false)
     }
@@ -136,12 +228,6 @@ export default function DemoLogin() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
-      {/* reCAPTCHA Script */}
-      <Script
-        src={`https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`}
-        onLoad={() => setRecaptchaLoaded(true)}
-      />
-
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
@@ -168,12 +254,26 @@ export default function DemoLogin() {
                 ⚠️ reCAPTCHA yapılandırması eksik. Demo modda çalışıyor.
               </div>
             )}
+
+            {process.env.NODE_ENV !== 'production' && process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY === '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI' && (
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-800">
+                🔧 Development Mode: Test reCAPTCHA key kullanılıyor
+                <br />
+                {recaptchaLoaded ? '✅ reCAPTCHA yüklendi' : '⏳ reCAPTCHA yükleniyor...'}
+              </div>
+            )}
+
+            {error && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-800">
+                <span className="font-medium">Hata:</span> {error}
+              </div>
+            )}
             
                         <button
               onClick={handleDemoLogin}
-              disabled={isLoading || !recaptchaLoaded}
+              disabled={isLoading}
               className={`w-full text-white py-3 px-4 rounded-lg font-semibold transition-colors ${
-                isLoading || !recaptchaLoaded
+                isLoading
                   ? 'bg-gray-400 cursor-not-allowed'
                   : 'bg-blue-600 hover:bg-blue-700'
               }`}
@@ -183,10 +283,16 @@ export default function DemoLogin() {
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
                   Giriş yapılıyor...
                 </div>
-              ) : !recaptchaLoaded ? (
-                'Güvenlik kontrolü yükleniyor...'
               ) : (
-                'Demo Girişi Yap'
+                <div className="flex items-center justify-center">
+                  {recaptchaLoaded && (
+                    <svg className="w-4 h-4 mr-2 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  )}
+                  Demo Girişi Yap
+                  {!recaptchaLoaded && ' (Demo Mod)'}
+                </div>
               )}
             </button>
 

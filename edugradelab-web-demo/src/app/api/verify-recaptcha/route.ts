@@ -17,12 +17,28 @@ export async function POST(request: NextRequest) {
     }
     
     const secretKey = process.env.RECAPTCHA_SECRET_KEY
+    const isProduction = process.env.NODE_ENV === 'production'
+    const isTestKey = secretKey === '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'
     
     if (!secretKey) {
       console.error('reCAPTCHA secret key not configured')
-      // Demo mode fallback
-      console.log('Demo mode: bypassing reCAPTCHA verification')
-      return NextResponse.json({ success: true })
+      return NextResponse.json({ error: 'reCAPTCHA not configured' }, { status: 500 })
+    }
+
+    // Development/localhost için test key kontrolü
+    if (!isProduction && isTestKey) {
+      console.log('Development mode: using test reCAPTCHA key')
+      
+      // Test fallback token kontrolü
+      if (token.startsWith('test-fallback-token-')) {
+        console.log('Test fallback token detected, bypassing reCAPTCHA verification')
+        return NextResponse.json({ 
+          success: true, 
+          score: 0.9,
+          environment: 'development',
+          fallback: true
+        })
+      }
     }
 
     // reCAPTCHA v3 verification
@@ -46,17 +62,23 @@ export async function POST(request: NextRequest) {
       console.log('reCAPTCHA verification result:', verificationData)
 
       if (verificationData.success) {
-        // Score kontrolü (0.5 ve üzeri güvenli kabul edilir)
+        // Score kontrolü (ortam tabanlı threshold)
         const score = verificationData.score || 0.0
-        if (score >= 0.3) { // Daha esnek threshold
+        const threshold = (!isProduction && isTestKey) ? 0.1 : 0.3 // Test key için daha düşük threshold
+        
+        console.log(`reCAPTCHA score: ${score}, threshold: ${threshold}, isProduction: ${isProduction}`)
+        
+        if (score >= threshold) {
           return NextResponse.json({ 
             success: true, 
-            score: score 
+            score: score,
+            environment: isProduction ? 'production' : 'development'
           })
         } else {
           return NextResponse.json({ 
             error: 'Security verification failed', 
-            score: score 
+            score: score,
+            threshold: threshold
           }, { status: 403 })
         }
       } else {
