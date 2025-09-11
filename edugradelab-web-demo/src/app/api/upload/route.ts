@@ -120,6 +120,18 @@ export async function POST(request: NextRequest) {
       if (webhookResponse.ok) {
         const responseData = await webhookResponse.text()
         console.log('Webhook response:', responseData)
+        
+        // n8n'den gelen response'u parse et
+        const responseParams = new URLSearchParams(responseData)
+        const responseJobId = responseParams.get('job_id')
+        const responseStatus = responseParams.get('status')
+        
+        console.log('n8n response parsed:', {
+          job_id: responseJobId,
+          status: responseStatus,
+          shouldMatch: responseJobId === ocrJob.id.toString()
+        })
+        
       } else {
         console.error('Webhook failed with status:', webhookResponse.status)
         const errorText = await webhookResponse.text()

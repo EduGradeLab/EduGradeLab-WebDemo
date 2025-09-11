@@ -4,7 +4,12 @@ import { prisma } from '@/lib/prisma'
 export async function POST(request: NextRequest) {
   try {
     const body = await request.text()
-    console.log('Webhook result received:', body)
+    console.log('=== WEBHOOK RESULT RECEIVED ===')
+    console.log('Timestamp:', new Date().toISOString())
+    console.log('Request headers:', Object.fromEntries(request.headers.entries()))
+    console.log('Raw body:', body)
+    console.log('Body length:', body.length)
+    console.log('===============================')
     
     // n8n'den gelen response format: user_id=5,ocr_result_id=17,status=done,job_id=17
     const params = new URLSearchParams(body)
