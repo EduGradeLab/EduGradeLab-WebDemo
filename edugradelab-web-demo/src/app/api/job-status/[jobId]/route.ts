@@ -29,7 +29,19 @@ export async function GET(
       result = await prisma.ocr_results.findUnique({
         where: { id: ocrJob.ocr_result_id }
       })
-      console.log('OCR result fetched for job', jobId, ':', result ? 'Found' : 'Not found')
+      console.log('OCR result fetched for job', jobId, ':', result ? `Found (ID: ${result.id})` : 'Not found')
+      console.log('OCR job details:', {
+        id: ocrJob.id,
+        status: ocrJob.status,
+        ocr_result_id: ocrJob.ocr_result_id,
+        exam_image_id: ocrJob.exam_image_id
+      })
+    } else {
+      console.log('OCR job not ready for result fetch:', {
+        id: ocrJob.id,
+        status: ocrJob.status,
+        ocr_result_id: ocrJob.ocr_result_id
+      })
     }
 
     // Exam image bilgilerini de getir

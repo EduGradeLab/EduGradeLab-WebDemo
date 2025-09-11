@@ -142,6 +142,23 @@ export async function POST(request: NextRequest) {
           shouldMatch: responseJobId === ocrJob.id.toString()
         })
         
+        // n8n'den başarılı response alındığında job'ı güncelle
+        if (responseStatus === 'done' && responseOcrResultId && responseJobId === ocrJob.id.toString()) {
+          try {
+            await prisma.ocr_jobs.update({
+              where: { id: ocrJob.id },
+              data: { 
+                status: 'DONE',
+                ocr_result_id: parseInt(responseOcrResultId),
+                updated_at: new Date()
+              }
+            })
+            console.log('OCR job updated successfully with result ID:', responseOcrResultId)
+          } catch (updateError) {
+            console.error('Error updating OCR job:', updateError)
+          }
+        }
+        
       } else {
         console.error('Webhook failed with status:', webhookResponse.status)
         const errorText = await webhookResponse.text()
