@@ -133,13 +133,15 @@ export default function DemoLogin() {
     setIsSubmitting(true)
     setMessage('')
     
-    debugLog('Form submission started for email:', email)
+    debugLog('Form submission started for email:', email || 'No email provided')
 
     try {
-      // Email validation
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-      if (!emailRegex.test(email)) {
-        throw new Error('Geçerli bir email adresi giriniz')
+      // Email validation (only if email is provided)
+      if (email.trim()) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        if (!emailRegex.test(email)) {
+          throw new Error('Geçerli bir email adresi giriniz veya boş bırakın')
+        }
       }
 
       // Generate reCAPTCHA token with robust error handling
@@ -166,7 +168,7 @@ export default function DemoLogin() {
         },
         body: JSON.stringify({ 
           token: recaptchaToken,
-          email: email 
+          email: email.trim() || null // null if empty
         }),
       })
 
@@ -185,6 +187,36 @@ export default function DemoLogin() {
       const scoreText = verifyResult.score ? ` (Skor: ${verifyResult.score.toFixed(2)})` : ''
       setMessage(`✅ Güvenlik doğrulaması başarılı!${scoreText} Demo sayfasına yönlendiriliyorsunuz...`)
       setMessageType('success')
+      
+      // Email kaydı (opsiyonel)
+      if (email.trim()) {
+        try {
+          debugLog('Saving email to database...')
+          setMessage('✅ Güvenlik doğrulaması başarılı! Email kaydediliyor...')
+          
+          const emailResponse = await fetch('/api/demo-email', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+              email: email.trim(),
+              name: email.split('@')[0] // Email'in @ öncesi kısmını isim olarak kullan
+            }),
+          })
+
+          if (emailResponse.ok) {
+            debugLog('Email saved successfully')
+            setMessage(`✅ Güvenlik doğrulaması başarılı!${scoreText} Email kaydedildi! Demo sayfasına yönlendiriliyorsunuz...`)
+          } else {
+            // Email kayıt hatası demo erişimini engellemez
+            debugLog('Email save failed, but continuing to demo')
+          }
+        } catch (emailError) {
+          debugLog('Email save error:', emailError)
+          // Email kayıt hatası demo erişimini engellemez
+        }
+      }
       
       debugLog('Login successful, redirecting to demo home')
       setTimeout(() => {
@@ -243,13 +275,16 @@ export default function DemoLogin() {
             <p className="text-gray-600">
               AI destekli sınav analizimizi hemen deneyin
             </p>
+            <p className="text-sm text-gray-500 mt-2">
+              Email girmek zorunlu değildir. Sadece reCAPTCHA doğrulaması gereklidir.
+            </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Email Input */}
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                Email Adresiniz
+                Email Adresiniz <span className="text-gray-500 text-xs">(opsiyonel)</span>
               </label>
               <div className="relative">
                 <input
@@ -258,8 +293,7 @@ export default function DemoLogin() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/90"
-                  placeholder="ornek@email.com"
-                  required
+                  placeholder="ornek@email.com (opsiyonel)"
                 />
                 <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
                   <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -267,6 +301,9 @@ export default function DemoLogin() {
                   </svg>
                 </div>
               </div>
+              <p className="text-xs text-gray-500 mt-1">
+                Email girmek opsiyoneldir. Girdiğiniz takdirde güncellemeler için kullanılacaktır.
+              </p>
             </div>
 
             {/* Message Display */}
@@ -283,7 +320,7 @@ export default function DemoLogin() {
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={isSubmitting || !email.trim() || !isPageReady}
+              disabled={isSubmitting || !isPageReady}
               className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-6 rounded-xl font-semibold hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0"
             >
               {isSubmitting ? (
