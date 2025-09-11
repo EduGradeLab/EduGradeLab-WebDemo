@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { prisma } from '../../../lib/prisma'
 
 // Webhook endpoint for receiving OCR results from n8n
 export async function POST(request: NextRequest) {

@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { NextRequest, NextResponse } from 'next/server'
+import { prisma } from '../../../lib/prisma'
 
 // Define type for OCR results
 interface OcrResult {

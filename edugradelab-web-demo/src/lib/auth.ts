@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/prisma'
+import { prisma } from './prisma'
 import { NextRequest } from 'next/server'
 
 // Demo kullanıcıyı getir veya oluştur

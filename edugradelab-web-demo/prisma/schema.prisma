@@ -22,7 +22,7 @@ model users {
 model exam_images {
   id            Int             @id @default(autoincrement())
   user_id       Int
-  image_blob    Bytes
+  image_blob    String          @db.Text
   filename      String          @db.VarChar(255)
   filetype      String          @db.VarChar(32)
   upload_time   DateTime        @default(now())
@@ -39,6 +39,7 @@ model ocr_jobs {
   exam_image_id Int          @unique
   status        OCRJobStatus @default(WAITING)
   webhook_id    String?      @db.VarChar(64)
+  ocr_result_id Int?
   created_at    DateTime     @default(now())
   updated_at    DateTime     @updatedAt
 

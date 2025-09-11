@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { prisma } from '../../../lib/prisma'
 import { getUserFromRequest } from '@/lib/auth'
 
 // Define type for OCR results to match Prisma schema

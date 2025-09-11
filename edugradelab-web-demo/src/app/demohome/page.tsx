@@ -21,9 +21,16 @@ interface OCRResult {
   score?: number
 }
 
+interface CurrentOCRResult {
+  ocrText: string
+  aiAnalysis: string
+  processingTime?: number
+}
+
 export default function DemoHome() {
   const [uploadProgress, setUploadProgress] = useState<UploadProgress | null>(null)
   const [recentResults, setRecentResults] = useState<OCRResult[]>([])
+  const [currentOCRResult, setCurrentOCRResult] = useState<CurrentOCRResult | null>(null)
   const [isUploading, setIsUploading] = useState(false)
   const router = useRouter()
 
@@ -47,6 +54,97 @@ export default function DemoHome() {
     }
   }
 
+  const startJobStatusPolling = (jobId: number) => {
+    console.log('Starting job status polling for job:', jobId)
+    
+    const pollInterval = setInterval(async () => {
+      try {
+        const response = await fetch(`/api/job-status/${jobId}`)
+        
+        if (response.ok) {
+          const jobData = await response.json()
+          console.log('Job status details:', {
+            jobId: jobData.job.id,
+            status: jobData.job.status,
+            hasResult: !!jobData.result,
+            resultData: jobData.result
+          })
+          
+          switch (jobData.job.status) {
+            case 'WAITING':
+              setUploadProgress({
+                progress: 100,
+                status: 'processing',
+                message: 'OCR işlemi sıraya alındı...'
+              })
+              break
+              
+            case 'PROCESSING':
+              setUploadProgress({
+                progress: 100,
+                status: 'analyzing',
+                message: 'OCR ve AI analizi yapılıyor...'
+              })
+              break
+              
+            case 'DONE':
+              clearInterval(pollInterval)
+              setUploadProgress({
+                progress: 100,
+                status: 'completed',
+                message: 'Analiz tamamlandı!'
+              })
+              setIsUploading(false)
+              loadRecentResults()
+              
+              // OCR sonuçlarını göster
+              if (jobData.result) {
+                setCurrentOCRResult({
+                  ocrText: jobData.result.ocr_text || 'OCR metni bulunamadı',
+                  aiAnalysis: jobData.result.ai_analysis || 'AI analizi bulunamadı',
+                  processingTime: jobData.result.processing_time_ms
+                })
+                
+                console.log('OCR Results:', {
+                  text: jobData.result.ocr_text,
+                  analysis: jobData.result.ai_analysis,
+                  processingTime: jobData.result.processing_time_ms
+                })
+              }
+              break
+              
+            case 'ERROR':
+              clearInterval(pollInterval)
+              setUploadProgress({
+                progress: 0,
+                status: 'error',
+                message: 'OCR işlemi başarısız: ' + (jobData.examImage?.error_message || 'Bilinmeyen hata')
+              })
+              setIsUploading(false)
+              break
+          }
+        } else {
+          console.error('Job status check failed:', response.status)
+        }
+      } catch (error) {
+        console.error('Polling error:', error)
+      }
+    }, 2000) // Her 2 saniyede bir kontrol et
+
+    // 5 dakika sonra polling'i durdur (timeout)
+    setTimeout(() => {
+      clearInterval(pollInterval)
+      if (isUploading) {
+        setUploadProgress({
+          progress: 0,
+          status: 'error',
+          message: 'İşlem zaman aşımına uğradı'
+        })
+        setIsUploading(false)
+      }
+    }, 300000) // 5 dakika timeout
+  }
+
   const handleFileSelect = async (file: File) => {
     if (!file) {
       alert('Geçerli bir dosya seçin.')
@@ -66,6 +164,7 @@ export default function DemoHome() {
     }
 
     setIsUploading(true)
+    setCurrentOCRResult(null) // Önceki sonuçları temizle
     setUploadProgress({
       progress: 0,
       status: 'uploading',
@@ -99,32 +198,17 @@ export default function DemoHome() {
       clearInterval(progressInterval)
 
       if (response.ok) {
-        await response.json() // Parse response but don't store since we're using simulated progress
+        const uploadResult = await response.json()
+        console.log('Upload successful:', uploadResult)
         
         setUploadProgress({
           progress: 100,
           status: 'processing',
-          message: 'OCR işlemi başlatıldı...'
+          message: 'OCR işlemi başlatıldı... Webhook yanıtı bekleniyor...'
         })
 
-        // Simulate processing
-        setTimeout(() => {
-          setUploadProgress({
-            progress: 100,
-            status: 'analyzing',
-            message: 'Yapay zeka analizi yapılıyor...'
-          })
-        }, 2000)
-
-        setTimeout(() => {
-          setUploadProgress({
-            progress: 100,
-            status: 'completed',
-            message: 'Analiz tamamlandı!'
-          })
-          setIsUploading(false)
-          loadRecentResults()
-        }, 4000)
+        // Job status polling başlat
+        startJobStatusPolling(uploadResult.jobId)
 
       } else {
         const errorData = await response.json().catch(() => ({ error: 'Bilinmeyen hata' }))
@@ -310,6 +394,76 @@ export default function DemoHome() {
                         </div>
                       </div>
                     )}
+                  </div>
+                )}
+
+                {/* OCR Results Display */}
+                {currentOCRResult && (
+                  <div className="mt-8 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-2xl p-6">
+                    <div className="flex items-center space-x-3 mb-6">
+                      <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                        <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-bold text-green-900">OCR ve AI Analizi Sonuçları</h3>
+                        <p className="text-green-700">
+                          {currentOCRResult.processingTime && `İşlem süresi: ${currentOCRResult.processingTime}ms`}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                      {/* OCR Text Results */}
+                      <div className="bg-white rounded-xl p-5 border border-green-100">
+                        <div className="flex items-center space-x-2 mb-4">
+                          <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                          </svg>
+                          <h4 className="text-lg font-semibold text-gray-900">OCR Metni</h4>
+                        </div>
+                        <div className="bg-gray-50 rounded-lg p-4 max-h-64 overflow-y-auto">
+                          <pre className="text-sm text-gray-700 whitespace-pre-wrap font-mono">
+                            {currentOCRResult.ocrText}
+                          </pre>
+                        </div>
+                      </div>
+
+                      {/* AI Analysis Results */}
+                      <div className="bg-white rounded-xl p-5 border border-green-100">
+                        <div className="flex items-center space-x-2 mb-4">
+                          <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                          </svg>
+                          <h4 className="text-lg font-semibold text-gray-900">AI Analizi</h4>
+                        </div>
+                        <div className="bg-gray-50 rounded-lg p-4 max-h-64 overflow-y-auto">
+                          <div className="text-sm text-gray-700 whitespace-pre-wrap">
+                            {currentOCRResult.aiAnalysis}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="mt-6 flex flex-wrap gap-4">
+                      <button
+                        onClick={() => setCurrentOCRResult(null)}
+                        className="px-4 py-2 bg-white border border-green-200 text-green-700 rounded-lg hover:bg-green-50 transition-colors"
+                      >
+                        Sonuçları Gizle
+                      </button>
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText(`OCR Metni:\n${currentOCRResult.ocrText}\n\nAI Analizi:\n${currentOCRResult.aiAnalysis}`)
+                          alert('Sonuçlar panoya kopyalandı!')
+                        }}
+                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                      >
+                        Panoya Kopyala
+                      </button>
+                    </div>
                   </div>
                 )}
 
