@@ -23,7 +23,7 @@ export default function FeaturesPage() {
       title: 'Gelişmiş OCR',
       description: 'Yüksek doğruluklu optik karakter tanıma',
       icon: '🔍',
-      status: 'available',
+      status: 'beta',
       details: [
         'Çoklu dil desteği (Türkçe, İngilizce)',
         'El yazısı tanıma',
@@ -37,7 +37,7 @@ export default function FeaturesPage() {
       title: 'AI Analizi',
       description: 'Yapay zeka destekli cevap analizi',
       icon: '🧠',
-      status: 'available',
+      status: 'coming-soon',
       details: [
         'Otomatik cevap anahtarı eşleştirme',
         'Kısmi puanlama desteği',
@@ -61,6 +61,104 @@ export default function FeaturesPage() {
       category: 'core'
     },
     {
+      id: 'word-integration',
+      title: 'Word Entegrasyonu',
+      description: 'Anlık Word düzenleme ve yükleme',
+      icon: '📝',
+      status: 'coming-soon',
+      details: [
+        'Local PC üzerinde otomatik düzenleme',
+        'Belgeyi geri yükleme',
+        'Real-time senkronizasyon',
+        'Versiyon kontrolü'
+      ],
+      category: 'integration'
+    },
+    {
+      id: 'unreadable-exams',
+      title: 'Okunamayan Sınavlar',
+      description: 'Zor okunabilir sınavlar için özel algoritma',
+      icon: '🔎',
+      status: 'coming-soon',
+      details: [
+        'Düşük kaliteli görüntü işleme',
+        'Bulanık yazı tanıma',
+        'Çoklu algoritma kullanımı',
+        'Manuel düzeltme araçları'
+      ],
+      category: 'advanced'
+    },
+    {
+      id: 'student-reports',
+      title: 'Detaylı Öğrenci Raporları',
+      description: 'Kişisel bazda detaylı analiz ve öneriler',
+      icon: '�',
+      status: 'coming-soon',
+      details: [
+        'Öğrenci bazlı eksiklik analizi',
+        'Çalışılması gereken konular',
+        'Güçlü ve zayıf yönler',
+        'Gelişim önerileri'
+      ],
+      category: 'analytics'
+    },
+    {
+      id: 'learning-resources',
+      title: 'Kişisel Öğrenme Kaynakları',
+      description: 'Öğrenciye özel çalışma materyalleri',
+      icon: '📚',
+      status: 'coming-soon',
+      details: [
+        'Benzer sorular ve çözümleri',
+        'Konu bazlı video önerileri',
+        'Interaktif alıştırmalar',
+        'Özel kaynak kitap önerileri'
+      ],
+      category: 'education'
+    },
+    {
+      id: 'video-platform',
+      title: 'Video Eğitim Platformu',
+      description: 'Hoca anlaşmaları ve canlı yayın sistemi',
+      icon: '🎥',
+      status: 'coming-soon',
+      details: [
+        'Canlı ders yayınları',
+        'Video bazlı ödev sistemi',
+        'Öğrenci ranking sistemi',
+        'Hoca-öğrenci etkileşimi'
+      ],
+      category: 'education'
+    },
+    {
+      id: 'answer-validation',
+      title: 'Cevap Geçerlilik Analizi',
+      description: 'Cevapların kabul edilebilirlik oranı',
+      icon: '✅',
+      status: 'coming-soon',
+      details: [
+        'Öğrenci yorumu analizi',
+        'Konuyla alakası kontrolü',
+        'Uyum derecelendirimesi',
+        'Hassasiyet ayarlama'
+      ],
+      category: 'advanced'
+    },
+    {
+      id: 'excel-integration',
+      title: 'Modüler Excel Entegrasyonu',
+      description: 'Gelişmiş Excel işlemleri ve raporlama',
+      icon: '📊',
+      status: 'coming-soon',
+      details: [
+        'Otomatik Excel rapor üretimi',
+        'Modüler veri işleme',
+        'Template bazlı raporlama',
+        'İleri Excel fonksiyonları'
+      ],
+      category: 'export'
+    },
+    {
       id: 'batch-processing',
       title: 'Toplu İşlem',
       description: 'Birden fazla sınavı aynı anda analiz et',
@@ -71,20 +169,6 @@ export default function FeaturesPage() {
         'Otomatik kuyruk yönetimi',
         'Toplu raporlama',
         'İşlem önceliği ayarlama'
-      ],
-      category: 'advanced'
-    },
-    {
-      id: 'voice-assistant',
-      title: 'Sesli Asistan',
-      description: 'Sesli komutlarla sınav yönetimi',
-      icon: '🎤',
-      status: 'coming-soon',
-      details: [
-        'Sesli komut tanıma',
-        'Sesli geri bildirim',
-        'Çoklu dil desteği',
-        'Özelleştirilebilir komutlar'
       ],
       category: 'advanced'
     },
@@ -149,7 +233,7 @@ export default function FeaturesPage() {
       title: 'Çeşitli Dışa Aktarma',
       description: 'Farklı formatlarda sonuç dışa aktarma',
       icon: '📤',
-      status: 'available',
+      status: 'beta',
       details: [
         'PDF, Excel, CSV formatları',
         'Özelleştirilebilir şablonlar',
@@ -194,6 +278,7 @@ export default function FeaturesPage() {
     { id: 'advanced', name: 'Gelişmiş', count: features.filter(f => f.category === 'advanced').length },
     { id: 'integration', name: 'Entegrasyon', count: features.filter(f => f.category === 'integration').length },
     { id: 'analytics', name: 'Analitik', count: features.filter(f => f.category === 'analytics').length },
+    { id: 'education', name: 'Eğitim', count: features.filter(f => f.category === 'education').length },
     { id: 'export', name: 'Dışa Aktarma', count: features.filter(f => f.category === 'export').length },
     { id: 'collaboration', name: 'İşbirliği', count: features.filter(f => f.category === 'collaboration').length },
     { id: 'mobile', name: 'Mobil', count: features.filter(f => f.category === 'mobile').length }
