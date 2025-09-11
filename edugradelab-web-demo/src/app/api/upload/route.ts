@@ -1,6 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
-import { getUserFromRequest } from '@/lib/auth'
+import { NextRequest, NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
+import { put } from '@vercel/blob';
+import { getUserFromRequest } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
   try {
@@ -23,20 +24,31 @@ export async function POST(request: NextRequest) {
     }
 
     const user = await getUserFromRequest(request)
-    if (!user) {
+    
+    // Demo için authentication bypass
+    const isDemoMode = process.env.NODE_ENV === 'development' || request.url.includes('localhost')
+    
+    if (!user && !isDemoMode) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Convert file to buffer
-    let bytes: ArrayBuffer
-    let buffer: Buffer
+    // Demo modunda dummy user oluştur
+    const effectiveUserId = user?.id || 1
+
+    // Upload file to Vercel Blob Storage
+    let blobUrl: string
     
     try {
-      bytes = await file.arrayBuffer()
-      buffer = Buffer.from(bytes)
-    } catch (fileError) {
-      console.error('File processing error:', fileError)
-      return NextResponse.json({ error: 'File processing failed' }, { status: 400 })
+      const fileName = `edugradelab/exam_images/${Date.now()}-${file.name}`
+      const blob = await put(fileName, file, {
+        access: 'public',
+        token: process.env.BLOB_READ_WRITE_TOKEN,
+      })
+      blobUrl = blob.url
+      console.log('File uploaded to Vercel Blob:', blobUrl)
+    } catch (blobError) {
+      console.error('Blob storage error:', blobError)
+      return NextResponse.json({ error: 'File upload failed' }, { status: 500 })
     }
 
     // Save to database
@@ -44,8 +56,8 @@ export async function POST(request: NextRequest) {
     try {
       examImage = await prisma.exam_images.create({
         data: {
-          user_id: user.id,
-          image_blob: buffer,
+          user_id: effectiveUserId,
+          image_blob: blobUrl, // Blob URL olarak kaydet
           filename: file.name,
           filetype: file.type,
           status: 'UPLOADED'
@@ -61,7 +73,7 @@ export async function POST(request: NextRequest) {
     try {
       ocrJob = await prisma.ocr_jobs.create({
         data: {
-          user_id: user.id,
+          user_id: effectiveUserId,
           exam_image_id: examImage.id,
           status: 'WAITING'
         }
@@ -71,25 +83,52 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Database error' }, { status: 500 })
     }
 
-    // TODO: Send to scanner webhook
-    // This is where you would send the file to your scanner service
+    // Webhook'a gönder (WEBHOOK_SCANNER_URL)
+    console.log('Sending webhook to scanner service...')
+    console.log('Webhook URL:', process.env.WEBHOOK_SCANNER_URL)
+    
     try {
-      await fetch(process.env.WEBHOOK_SCANNER_URL!, {
+      // Sunucunun çalıştığı portu tespit et
+      const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http'
+      const host = process.env.NODE_ENV === 'production' ? request.headers.get('host') : 'localhost:3000'
+      const callbackUrl = `${protocol}://${host}/api/webhook-result`
+      
+      const webhookPayload = {
+        user_id: effectiveUserId,
+        file_id: examImage.id,
+        jobId: ocrJob.id,
+        fileName: file.name,
+        fileType: file.type,
+        blobUrl: blobUrl, // Blob URL'yi de gönder
+        uploadTime: new Date().toISOString(),
+        status: 'uploaded',
+        callbackUrl: callbackUrl
+      }
+      
+      console.log('Webhook payload:', JSON.stringify(webhookPayload, null, 2))
+      
+      const webhookResponse = await fetch(process.env.WEBHOOK_SCANNER_URL!, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          jobId: ocrJob.id,
-          fileId: examImage.id,
-          fileName: file.name,
-          fileType: file.type,
-          userId: user.id
-        })
+        body: JSON.stringify(webhookPayload)
       })
+      
+      console.log('Webhook response status:', webhookResponse.status)
+      
+      if (webhookResponse.ok) {
+        const responseData = await webhookResponse.text()
+        console.log('Webhook response:', responseData)
+      } else {
+        console.error('Webhook failed with status:', webhookResponse.status)
+        const errorText = await webhookResponse.text()
+        console.error('Webhook error response:', errorText)
+      }
+      
     } catch (webhookError) {
       console.error('Scanner webhook error:', webhookError)
-      // Don't fail the upload if webhook fails
+      // Don't fail the upload if webhook fails - continue with success response
     }
 
     return NextResponse.json({
