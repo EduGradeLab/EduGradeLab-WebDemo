@@ -2,20 +2,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '../../../lib/prisma'
 import { getUserFromRequest } from '@/lib/auth'
 
-// Define type for OCR results to match Prisma schema
-interface OcrResult {
-  id: number
-  exam_image_id: number
-  user_id: number
-  ocr_text: string | null
-  ai_analysis: string | null
-  processed_at: Date
-  processing_time_ms: number | null
-  webhook_status: string
-  webhook_response: string | null
-  feedback: string | null
-}
-
 export async function GET(request: NextRequest) {
   try {
     // Demo için authentication bypass
@@ -46,7 +32,7 @@ export async function GET(request: NextRequest) {
 
     const skip = (page - 1) * limit
 
-    // Build where clause
+    // Build where clause for exam_images
     const where: Record<string, unknown> = {}
 
     // Demo modunda user_id kontrolü yapma
@@ -62,13 +48,23 @@ export async function GET(request: NextRequest) {
     }
 
     if (status !== 'all') {
-      where.status = status
+      // Status mapping for database compatibility
+      const statusMapping: Record<string, string> = {
+        'uploaded': 'UPLOADED',
+        'processing': 'PROCESSING', 
+        'completed': 'PROCESSED',
+        'analyzing': 'PROCESSING',
+        'failed': 'ERROR',
+        'error': 'ERROR'
+      }
+      
+      where.status = statusMapping[status] || status.toUpperCase()
     }
 
-    // Get documents with pagination
-    let documents, total
+    // Get exam_images with pagination using proper SQL logic
+    let examImages, total
     try {
-      [documents, total] = await Promise.all([
+      [examImages, total] = await Promise.all([
         prisma.exam_images.findMany({
           where,
           orderBy: {
@@ -80,40 +76,86 @@ export async function GET(request: NextRequest) {
         prisma.exam_images.count({ where })
       ])
     } catch (dbError) {
-      console.error('Database error while fetching documents:', dbError)
+      console.error('Database error while fetching exam images:', dbError)
       return NextResponse.json({ error: 'Database error' }, { status: 500 })
     }
 
-    // Get OCR results for each document separately
-    const documentIds = documents.map(doc => doc.id)
-    let ocrResults: OcrResult[] = []
-    try {
-      ocrResults = await prisma.ocr_results.findMany({
-        where: {
-          exam_image_id: {
-            in: documentIds
+    // Get OCR jobs and results using proper table relationships
+    const examImageIds = examImages.map(img => img.id)
+    let ocrJobs: any[] = []
+    let ocrResults: any[] = []
+
+    if (examImageIds.length > 0) {
+      try {
+        // First get OCR jobs for these exam images
+        ocrJobs = await prisma.ocr_jobs.findMany({
+          where: {
+            exam_image_id: {
+              in: examImageIds
+            }
           }
+        })
+
+        // Then get OCR results using exam_image_ids from ocr_jobs
+        const examImageIdsWithJobs = ocrJobs.map(job => job.exam_image_id).filter(id => id)
+        if (examImageIdsWithJobs.length > 0) {
+          ocrResults = await prisma.ocr_results.findMany({
+            where: {
+              exam_image_id: {
+                in: examImageIdsWithJobs
+              }
+            }
+          })
         }
-      })
-    } catch (dbError) {
-      console.error('Database error while fetching OCR results:', dbError)
-      // Continue without OCR results if error occurs
-      ocrResults = []
+      } catch (dbError) {
+        console.error('Database error while fetching OCR data:', dbError)
+        ocrJobs = []
+        ocrResults = []
+      }
     }
 
-    const formattedDocuments = documents.map((doc) => {
-      const ocrResult = ocrResults.find(result => result.exam_image_id === doc.id)
+    const formattedDocuments = examImages.map((img) => {
+      // Find OCR job for this exam image
+      const ocrJob = ocrJobs.find(job => job.exam_image_id === img.id)
+      // Find OCR result using exam_image_id
+      const ocrResult = ocrResults.find(result => result.exam_image_id === img.id)
+      
+      // Determine status based on exam_images and OCR jobs
+      let status = img.status.toLowerCase()
+      if (ocrJob) {
+        switch (ocrJob.status) {
+          case 'WAITING':
+            status = 'pending'
+            break
+          case 'PROCESSING':
+            status = 'analyzing'
+            break
+          case 'DONE':
+            status = 'completed'
+            break
+          case 'ERROR':
+            status = 'error'
+            break
+        }
+      }
+
       return {
-        id: doc.id.toString(),
-        filename: doc.filename,
-        uploadTime: doc.upload_time.toISOString(),
-        status: doc.status,
+        id: img.id.toString(),
+        filename: img.filename,
+        uploadTime: img.upload_time.toISOString(),
+        status: status,
         score: ocrResult?.ai_analysis 
           ? Math.floor(Math.random() * 30) + 70 // Mock score for demo
           : undefined,
         processingTime: ocrResult?.processing_time_ms,
         ocrText: ocrResult?.ocr_text,
-        aiAnalysis: ocrResult?.ai_analysis
+        aiAnalysis: ocrResult?.ai_analysis,
+        fileType: img.filetype?.toLowerCase() as 'pdf' | 'image' || 'image',
+        fileSize: img.image_blob ? `${Math.round(img.image_blob.length / 1024)} KB` : undefined,
+        name: img.filename
+          .replace(/\.[^/.]+$/, '')
+          .replace(/[_-]/g, ' ')
+          .replace(/\b\w/g, l => l.toUpperCase())
       }
     })
 

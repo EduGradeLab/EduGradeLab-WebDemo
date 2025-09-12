@@ -11,14 +11,18 @@ interface UploadProgress {
   message: string
 }
 
-interface OCRResult {
-  id: string
+interface JobOperation {
+  id: number
+  jobId: number
   filename: string
-  uploadTime: string
+  operation: string
+  level: string
   status: string
+  score?: number
+  createdAt: string
+  documentId?: number
   ocrText?: string
   aiAnalysis?: string
-  score?: number
 }
 
 interface CurrentOCRResult {
@@ -29,7 +33,7 @@ interface CurrentOCRResult {
 
 export default function DemoHome() {
   const [uploadProgress, setUploadProgress] = useState<UploadProgress | null>(null)
-  const [recentResults, setRecentResults] = useState<OCRResult[]>([])
+  const [recentOperations, setRecentOperations] = useState<JobOperation[]>([])
   const [currentOCRResult, setCurrentOCRResult] = useState<CurrentOCRResult | null>(null)
   const [isUploading, setIsUploading] = useState(false)
   const router = useRouter()
@@ -43,7 +47,7 @@ export default function DemoHome() {
       const response = await fetch('/api/recent-results')
       if (response.ok) {
         const data = await response.json()
-        setRecentResults(data.results || [])
+        setRecentOperations(data.data || [])
       } else {
         const errorData = await response.json().catch(() => ({ error: 'Bilinmeyen hata' }))
         console.error('API error:', errorData.error)
@@ -242,15 +246,37 @@ export default function DemoHome() {
       case 'analyzing': return 'Analiz Ediliyor'
       case 'completed': return 'Tamamlandı'
       case 'error': return 'Hata'
+      case 'WAITING': return 'Bekliyor'
+      case 'PROCESSING': return 'İşleniyor'
+      case 'DONE': return 'Tamamlandı'
+      case 'ERROR': return 'Hata'
       default: return status
     }
   }
 
+  const getOperationLevelColor = (level: string) => {
+    switch (level) {
+      case 'INFO': return 'text-blue-600 bg-blue-50'
+      case 'WARNING': return 'text-yellow-600 bg-yellow-50'
+      case 'ERROR': return 'text-red-600 bg-red-50'
+      default: return 'text-gray-600 bg-gray-50'
+    }
+  }
+
+  const getOperationLevelText = (level: string) => {
+    switch (level) {
+      case 'INFO': return 'Bilgi'
+      case 'WARNING': return 'Uyarı'
+      case 'ERROR': return 'Hata'
+      default: return level
+    }
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex">
       <Sidebar activePage="upload" />
       
-      <div className="lg:ml-64 p-4 lg:p-8">
+      <div className="flex-1 lg:ml-0 p-4 lg:p-8 min-h-screen">
         <div className="max-w-7xl mx-auto">
           {/* Header Section */}
           <div className="mb-8">
@@ -271,7 +297,7 @@ export default function DemoHome() {
             </div>
             
             {/* Quick Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
               <div className="bg-white/80 backdrop-blur-md rounded-2xl p-6 border border-white/20 shadow-lg">
                 <div className="flex items-center space-x-3">
                   <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
@@ -316,9 +342,9 @@ export default function DemoHome() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
             {/* Upload Section */}
-            <div className="xl:col-span-2">
+            <div className="lg:col-span-2">
               <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-xl border border-white/20 p-8">
                 <div className="flex items-center space-x-3 mb-6">
                   <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
@@ -418,13 +444,13 @@ export default function DemoHome() {
                       {/* OCR Text Results */}
                       <div className="bg-white rounded-xl p-5 border border-green-100">
                         <div className="flex items-center space-x-2 mb-4">
-                          <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-5 h-5 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                           </svg>
-                          <h4 className="text-lg font-semibold text-gray-900">OCR Metni</h4>
+                          <h4 className="text-lg font-semibold text-gray-900 truncate">OCR Metni</h4>
                         </div>
-                        <div className="bg-gray-50 rounded-lg p-4 max-h-64 overflow-y-auto">
-                          <pre className="text-sm text-gray-700 whitespace-pre-wrap font-mono">
+                        <div className="bg-gray-50 rounded-lg p-4 max-h-64 overflow-y-auto custom-scrollbar">
+                          <pre className="text-sm text-gray-700 whitespace-pre-wrap font-mono break-words">
                             {currentOCRResult.ocrText}
                           </pre>
                         </div>
@@ -433,13 +459,13 @@ export default function DemoHome() {
                       {/* AI Analysis Results */}
                       <div className="bg-white rounded-xl p-5 border border-green-100">
                         <div className="flex items-center space-x-2 mb-4">
-                          <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-5 h-5 text-purple-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                           </svg>
-                          <h4 className="text-lg font-semibold text-gray-900">AI Analizi</h4>
+                          <h4 className="text-lg font-semibold text-gray-900 truncate">AI Analizi</h4>
                         </div>
-                        <div className="bg-gray-50 rounded-lg p-4 max-h-64 overflow-y-auto">
-                          <div className="text-sm text-gray-700 whitespace-pre-wrap">
+                        <div className="bg-gray-50 rounded-lg p-4 max-h-64 overflow-y-auto custom-scrollbar">
+                          <div className="text-sm text-gray-700 whitespace-pre-wrap break-words">
                             {currentOCRResult.aiAnalysis}
                           </div>
                         </div>
@@ -497,7 +523,7 @@ export default function DemoHome() {
             </div>
 
             {/* Enhanced Recent Results */}
-            <div className="xl:col-span-1">
+            <div className="lg:col-span-1">
               <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-xl border border-white/20 p-6">
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center space-x-3">
@@ -508,65 +534,82 @@ export default function DemoHome() {
                     </div>
                     <h2 className="text-xl font-bold text-gray-900">Son İşlemler</h2>
                   </div>
-                  {recentResults.length > 0 && (
+                  {recentOperations.length > 0 && (
                     <span className="px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded-full">
-                      {recentResults.length}
+                      {recentOperations.length}
                     </span>
                   )}
                 </div>
                 
-                {recentResults.length === 0 ? (
+                {recentOperations.length === 0 ? (
                   <div className="text-center py-12">
                     <div className="w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center mx-auto mb-6">
                       <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                       </svg>
                     </div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Henüz Analiz Yok</h3>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Henüz İşlem Yok</h3>
                     <p className="text-gray-500 text-sm">
                       İlk sınav kağıdınızı yükleyerek başlayın
                     </p>
                   </div>
                 ) : (
-                  <div className="space-y-4">
-                    {recentResults.map((result) => (
+                  <div className="space-y-3 max-h-96 overflow-y-auto custom-scrollbar">
+                    {recentOperations.map((operation) => (
                       <div
-                        key={result.id}
-                        className="p-4 border border-gray-200 rounded-xl hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 transition-all duration-300 cursor-pointer group"
+                        key={operation.id}
+                        className="p-3 sm:p-4 border border-gray-200 rounded-xl hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 transition-all duration-300 cursor-pointer group"
                       >
-                        <div className="flex items-center justify-between mb-3">
-                          <h3 className="font-semibold text-gray-900 truncate group-hover:text-blue-600 transition-colors">
-                            {result.filename}
+                        <div className="flex items-start justify-between mb-2 sm:mb-3">
+                          <h3 className="font-semibold text-gray-900 text-sm sm:text-base truncate group-hover:text-blue-600 transition-colors flex-1 mr-2">
+                            {operation.filename}
                           </h3>
-                          <span className={`px-3 py-1 text-xs font-medium rounded-full ${getStatusColor(result.status)}`}>
-                            {getStatusText(result.status)}
-                          </span>
+                          <div className="flex items-center space-x-2 flex-shrink-0">
+                            <span className={`px-2 py-1 text-xs font-medium rounded-full ${getOperationLevelColor(operation.level)}`}>
+                              {getOperationLevelText(operation.level)}
+                            </span>
+                            <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(operation.status)}`}>
+                              {getStatusText(operation.status)}
+                            </span>
+                          </div>
                         </div>
                         
-                        <div className="flex items-center justify-between text-xs text-gray-500 mb-3">
-                          <span>{new Date(result.uploadTime).toLocaleString('tr-TR')}</span>
-                          {result.score && (
-                            <div className="flex items-center space-x-1">
+                        <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-gray-500 mb-2 sm:mb-3">
+                          <span className="truncate flex-1">{new Date(operation.createdAt).toLocaleString('tr-TR', { 
+                            year: 'numeric', 
+                            month: 'short', 
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          })}</span>
+                          {operation.score && (
+                            <div className="flex items-center space-x-1 flex-shrink-0">
                               <svg className="w-3 h-3 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                               </svg>
-                              <span className="font-semibold text-yellow-600">{result.score}/100</span>
+                              <span className="font-semibold text-yellow-600">{operation.score}/100</span>
                             </div>
                           )}
                         </div>
                         
-                        <div className="flex items-center text-xs text-blue-600 group-hover:text-blue-700">
-                          <span>Detayları gör</span>
-                          <svg className="w-3 h-3 ml-1 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                          </svg>
+                        <div className="text-xs text-gray-600 mb-2">
+                          <p className="font-medium">{operation.operation}</p>
                         </div>
+                        
+                        {operation.documentId && (
+                          <div className="flex items-center text-xs text-blue-600 group-hover:text-blue-700">
+                            <span>Detayları gör</span>
+                            <svg className="w-3 h-3 ml-1 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                            </svg>
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>
                 )}
                 
-                {recentResults.length > 0 && (
+                {recentOperations.length > 0 && (
                   <button
                     onClick={() => router.push('/document')}
                     className="mt-6 w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-6 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5"

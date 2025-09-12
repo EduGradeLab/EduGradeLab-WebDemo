@@ -26,7 +26,7 @@ export default function Sidebar({ activePage }: SidebarProps) {
     { 
       id: 'documents', 
       label: 'Dokümanlar', 
-      href: '/demodocument', 
+      href: '/document', 
       icon: '📄',
       description: 'Geçmiş analizler'
     },
@@ -56,10 +56,12 @@ export default function Sidebar({ activePage }: SidebarProps) {
 
       {/* Sidebar */}
       <div className={`
-        fixed left-0 top-0 h-full w-64 bg-white shadow-lg border-r border-gray-200 z-50
+        fixed left-0 top-0 h-screen w-64 bg-white shadow-lg border-r border-gray-200 z-50
         transform transition-transform duration-300 ease-in-out
         ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
         lg:translate-x-0 lg:static lg:z-auto
+        /* Performance optimization */
+        will-change: transform
       `}>
         <div className="p-6">
           <div className="flex items-center space-x-3 mb-8">
@@ -108,9 +110,6 @@ export default function Sidebar({ activePage }: SidebarProps) {
           </nav>
         </div>
       </div>
-
-      {/* Main Content Spacer for Desktop */}
-      <div className="hidden lg:block w-64 flex-shrink-0" />
     </>
   )
 }
