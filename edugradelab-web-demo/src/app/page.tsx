@@ -13,18 +13,45 @@ export default function Home() {
               </div>
               <h1 className="text-2xl font-bold gradient-text">EduGradeLab</h1>
             </div>
-            <nav className="hidden md:flex space-x-8">
-              <Link href="#features" className="text-gray-600 hover:text-blue-600 transition-colors font-medium">
+            
+            {/* Desktop Navigation */}
+            <nav className="hidden md:flex items-center space-x-8">
+              <Link href="/features" className="text-gray-600 hover:text-blue-600 transition-colors font-medium">
                 Özellikler
               </Link>
               <Link href="#how-it-works" className="text-gray-600 hover:text-blue-600 transition-colors font-medium">
                 Nasıl Çalışır?
               </Link>
-              <Link href="/demologin" className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-lg hover:shadow-lg transition-all duration-300 font-medium">
+              <Link href="/document" className="text-gray-600 hover:text-blue-600 transition-colors font-medium">
+                Belgeler
+              </Link>
+              <Link href="/demologin" className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2.5 rounded-lg hover:shadow-lg transition-all duration-300 font-medium">
                 Demo Dene
               </Link>
             </nav>
+
+            {/* Mobile Menu Button */}
+            <div className="md:hidden">
+              <Link href="/demologin" className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-lg text-sm font-medium">
+                Demo Dene
+              </Link>
+            </div>
           </div>
+          
+          {/* Mobile Navigation */}
+          <nav className="md:hidden pb-4">
+            <div className="flex flex-wrap gap-2 justify-center">
+              <Link href="/features" className="text-gray-600 hover:text-blue-600 transition-colors font-medium text-sm">
+                Özellikler
+              </Link>
+              <Link href="#how-it-works" className="text-gray-600 hover:text-blue-600 transition-colors font-medium text-sm">
+                Nasıl Çalışır?
+              </Link>
+              <Link href="/document" className="text-gray-600 hover:text-blue-600 transition-colors font-medium text-sm">
+                Belgeler
+              </Link>
+            </div>
+          </nav>
         </div>
       </header>
 

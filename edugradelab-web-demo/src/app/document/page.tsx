@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import Link from 'next/link'
 import Sidebar from '@/components/Sidebar'
 
 interface Document {
@@ -104,20 +105,31 @@ export default function DocumentPage() {
     <div className="min-h-screen bg-gray-50">
       <Sidebar activePage="documents" />
       
-      <div className="lg:ml-64 p-6 lg:p-8">
-        <div className="max-w-7xl mx-auto">
+      <div className="lg:ml-64 p-4 lg:p-6">
+        <div className="max-w-6xl mx-auto">
           {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              Belgelerim
-            </h1>
-            <p className="text-gray-600">
-              Yüklediğiniz tüm sınav kağıtları ve analiz sonuçları
-            </p>
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h1 className="text-4xl font-bold text-gray-900 mb-2">
+                Belgelerim
+              </h1>
+              <p className="text-lg text-gray-600">
+                Yüklediğiniz tüm sınav kağıtları ve analiz sonuçları
+              </p>
+            </div>
+            <Link 
+              href="/"
+              className="flex items-center space-x-2 text-blue-600 hover:text-blue-700 font-medium transition-colors"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+              </svg>
+              <span>Ana Sayfa</span>
+            </Link>
           </div>
 
           {/* Filters */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 lg:p-6 mb-6">
             <div className="flex flex-col lg:flex-row gap-4">
               <div className="flex-1">
                 <input
@@ -146,7 +158,7 @@ export default function DocumentPage() {
           </div>
 
           {/* Documents Table */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
             {loading ? (
               <div className="p-8 text-center">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
@@ -177,22 +189,22 @@ export default function DocumentPage() {
                 <table className="w-full">
                   <thead className="bg-gray-50 border-b border-gray-200">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Dosya Adı
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Durum
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Puan
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
                         Yükleme Tarihi
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
                         İşlem Süresi
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         İşlemler
                       </th>
                     </tr>
@@ -200,32 +212,32 @@ export default function DocumentPage() {
                   <tbody className="bg-white divide-y divide-gray-200">
                     {documents.map((document) => (
                       <tr key={document.id} className="hover:bg-gray-50">
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-4 lg:px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
-                            <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center mr-3">
-                              <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div className="w-8 h-8 lg:w-10 lg:h-10 bg-gray-100 rounded-lg flex items-center justify-center mr-2 lg:mr-3">
+                              <svg className="w-4 h-4 lg:w-5 lg:h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                               </svg>
                             </div>
-                            <div>
-                              <div className="text-sm font-medium text-gray-900">
+                            <div className="min-w-0 flex-1">
+                              <div className="text-sm font-medium text-gray-900 truncate">
                                 {document.filename}
                               </div>
                             </div>
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-4 lg:px-6 py-4 whitespace-nowrap">
                           <span className={`px-2 py-1 text-xs rounded-full ${getStatusColor(document.status)}`}>
                             {getStatusText(document.status)}
                           </span>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-4 lg:px-6 py-4 whitespace-nowrap">
                           {document.score ? (
                             <div className="flex items-center">
                               <span className="text-sm font-semibold text-blue-600">
                                 {document.score}/100
                               </span>
-                              <div className="ml-2 w-16 bg-gray-200 rounded-full h-2">
+                              <div className="ml-2 w-12 lg:w-16 bg-gray-200 rounded-full h-2">
                                 <div 
                                   className="bg-blue-600 h-2 rounded-full" 
                                   style={{ width: `${document.score}%` }}
@@ -236,16 +248,16 @@ export default function DocumentPage() {
                             <span className="text-gray-400">-</span>
                           )}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden sm:table-cell">
                           {formatDate(document.uploadTime)}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell">
                           {document.processingTime ? `${document.processingTime}ms` : '-'}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-sm font-medium">
                           <button
                             onClick={() => setSelectedDocument(document)}
-                            className="text-blue-600 hover:text-blue-900 mr-3"
+                            className="text-blue-600 hover:text-blue-900 mr-2 lg:mr-3"
                           >
                             Görüntüle
                           </button>
