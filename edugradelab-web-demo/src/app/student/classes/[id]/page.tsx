@@ -198,7 +198,7 @@ export default function StudentClassDetail() {
                         </div>
                         {grade.feedback && (
                           <div className="text-xs text-gray-700 mt-1 italic">
-                            "{grade.feedback}"
+                            &ldquo;{grade.feedback}&rdquo;
                           </div>
                         )}
                       </div>

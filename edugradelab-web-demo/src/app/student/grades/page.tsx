@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Link from 'next/link'
 import RoleSidebar from '@/components/RoleSidebar'
 import {
   demoStudents,
@@ -177,7 +176,7 @@ export default function StudentGrades() {
                           </div>
                           {grade.feedback && (
                             <div className="text-sm text-gray-700 mt-1 italic">
-                              "{grade.feedback}"
+                              &ldquo;{grade.feedback}&rdquo;
                             </div>
                           )}
                         </div>
