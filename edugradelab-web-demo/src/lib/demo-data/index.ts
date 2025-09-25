@@ -4,6 +4,8 @@ export * from './teachers'
 export * from './classes'
 export * from './badges'
 export * from './admin'
+export * from './feed'
+export * from './chat'
 
 // Import all demo data for helper functions
 import { demoStudents } from './students'

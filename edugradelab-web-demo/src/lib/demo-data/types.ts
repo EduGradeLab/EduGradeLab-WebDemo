@@ -157,3 +157,51 @@ export interface SystemHealth {
   icon: string
   description: string
 }
+
+// Feed and Chat Types
+export interface FeedPost {
+  id: string
+  content: string
+  authorId: string
+  authorName: string
+  authorRole: 'student' | 'teacher' | 'admin'
+  type: 'announcement' | 'achievement' | 'reminder' | 'general'
+  timestamp: string
+  likes: number
+  comments: Comment[]
+  attachments?: string[]
+  tags?: string[]
+}
+
+export interface Comment {
+  id: string
+  postId: string
+  authorId: string
+  authorName: string
+  authorRole: 'student' | 'teacher' | 'admin'
+  content: string
+  timestamp: string
+  likes: number
+}
+
+export interface ChatChannel {
+  id: string
+  name: string
+  type: 'class' | 'subject' | 'school' | 'general'
+  description?: string
+  memberCount: number
+  lastMessage?: string
+  lastMessageTime?: string
+  unreadCount?: number
+}
+
+export interface ChatMessage {
+  id: string
+  channelId: string
+  authorId: string
+  authorName: string
+  authorRole: 'student' | 'teacher' | 'admin'
+  content: string
+  timestamp: string
+  type: 'text' | 'announcement' | 'system'
+}

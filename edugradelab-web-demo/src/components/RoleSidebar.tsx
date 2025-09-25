@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
@@ -23,6 +23,20 @@ export default function RoleSidebar({ role, activePage }: RoleSidebarProps) {
       href: '/student',
       icon: '🏠',
       description: 'Genel bakış'
+    },
+    {
+      id: 'feed',
+      label: 'Feed',
+      href: '/feed',
+      icon: '📰',
+      description: 'Duyurular ve paylaşımlar'
+    },
+    {
+      id: 'chat',
+      label: 'Sohbet',
+      href: '/chat',
+      icon: '💬',
+      description: 'Kanallar ve mesajlar'
     },
     {
       id: 'grades',
@@ -63,6 +77,20 @@ export default function RoleSidebar({ role, activePage }: RoleSidebarProps) {
       description: 'Genel bakış'
     },
     {
+      id: 'feed',
+      label: 'Feed',
+      href: '/feed',
+      icon: '📰',
+      description: 'Duyurular ve paylaşımlar'
+    },
+    {
+      id: 'chat',
+      label: 'Sohbet',
+      href: '/chat',
+      icon: '💬',
+      description: 'Kanallar ve mesajlar'
+    },
+    {
       id: 'classes',
       label: 'Sınıflar',
       href: '/teacher/classes',
@@ -99,6 +127,20 @@ export default function RoleSidebar({ role, activePage }: RoleSidebarProps) {
       href: '/admin',
       icon: '🏠',
       description: 'Sistem genel bakış'
+    },
+    {
+      id: 'feed',
+      label: 'Feed',
+      href: '/feed',
+      icon: '📰',
+      description: 'Duyurular ve paylaşımlar'
+    },
+    {
+      id: 'chat',
+      label: 'Sohbet',
+      href: '/chat',
+      icon: '💬',
+      description: 'Kanallar ve mesajlar'
     },
     {
       id: 'users',
@@ -259,13 +301,13 @@ export default function RoleSidebar({ role, activePage }: RoleSidebarProps) {
           {/* Back to Demo */}
           <div className="mt-8 pt-6 border-t border-gray-200">
             <Link
-              href="/demohome"
+              href="/"
               className="flex items-center space-x-2 text-sm text-gray-500 hover:text-gray-700 transition-colors"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
-              <span>Demo OCR&apos;ye Dön</span>
+              <span>Ana Sayfaya Dön</span>
             </Link>
           </div>
         </div>

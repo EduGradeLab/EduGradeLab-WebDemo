@@ -1,59 +1,11 @@
 import Link from 'next/link'
+import Navbar from '@/components/Navbar'
 
 export default function Home() {
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
-      {/* Header */}
-      <header className="bg-white/80 backdrop-blur-md shadow-sm border-b border-white/20 sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">EG</span>
-              </div>
-              <h1 className="text-2xl font-bold gradient-text">EduGradeLab</h1>
-            </div>
-            
-            {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center space-x-8">
-              <Link href="/features" className="text-gray-600 hover:text-blue-600 transition-colors font-medium">
-                Özellikler
-              </Link>
-              <Link href="#how-it-works" className="text-gray-600 hover:text-blue-600 transition-colors font-medium">
-                Nasıl Çalışır?
-              </Link>
-              <Link href="/document" className="text-gray-600 hover:text-blue-600 transition-colors font-medium">
-                Belgeler
-              </Link>
-              <Link href="/demologin" className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2.5 rounded-lg hover:shadow-lg transition-all duration-300 font-medium">
-                Demo Dene
-              </Link>
-            </nav>
-
-            {/* Mobile Menu Button */}
-            <div className="md:hidden">
-              <Link href="/demologin" className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-lg text-sm font-medium">
-                Demo Dene
-              </Link>
-            </div>
-          </div>
-          
-          {/* Mobile Navigation */}
-          <nav className="md:hidden pb-4">
-            <div className="flex flex-wrap gap-2 justify-center">
-              <Link href="/features" className="text-gray-600 hover:text-blue-600 transition-colors font-medium text-sm">
-                Özellikler
-              </Link>
-              <Link href="#how-it-works" className="text-gray-600 hover:text-blue-600 transition-colors font-medium text-sm">
-                Nasıl Çalışır?
-              </Link>
-              <Link href="/document" className="text-gray-600 hover:text-blue-600 transition-colors font-medium text-sm">
-                Belgeler
-              </Link>
-            </div>
-          </nav>
-        </div>
-      </header>
+      <Navbar showDemoButton={true} />
 
       {/* Hero Section */}
       <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
@@ -199,6 +151,179 @@ export default function Home() {
           </div>
         </div>
 
+        {/* NEW: Social Learning Features */}
+        <div className="mt-32">
+          <div className="text-center mb-16">
+            <span className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-purple-100 to-pink-100 text-purple-800 rounded-full text-sm font-medium mb-4">
+              🌟 Sosyal Öğrenme Platformu
+            </span>
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              Sadece Değil, Sosyal Bir Öğrenme Deneyimi
+            </h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Yapay zeka destekli analiz yanı sıra, sosyal etkileşim ve işbirliği özellikleriyle öğrenmeyi bir üst seviyeye taşıyın
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-20">
+            {/* Feed Feature */}
+            <div className="bg-white rounded-3xl p-8 shadow-xl border border-gray-100 hover:shadow-2xl transition-all duration-500 group">
+              <div className="flex items-center mb-6">
+                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-300">
+                  <span className="text-2xl text-white">📰</span>
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold text-gray-900">Feed & Duvar</h3>
+                  <p className="text-gray-600">Facebook/LinkedIn tarzı sosyal akış</p>
+                </div>
+              </div>
+
+              <div className="space-y-4 mb-6">
+                <div className="flex items-start space-x-3">
+                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-sm">📢</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900">Duyurular & Paylaşımlar</h4>
+                    <p className="text-gray-600 text-sm">Öğretmen duyuruları, başarı hikayeleri, etkinlikler</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start space-x-3">
+                  <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-sm">🏆</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900">Başarı Rozetleri</h4>
+                    <p className="text-gray-600 text-sm">Öğrenci başarmlarını kutlayın ve motivasyonu artırın</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start space-x-3">
+                  <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-sm">🤖</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900">AI Önerileri</h4>
+                    <p className="text-gray-600 text-sm">Kişiselleştirilmiş içerik önerileri ve analizler</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-4 mb-6">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium text-gray-700">Örnek Feed Gönderisi</span>
+                  <span className="text-xs text-gray-500">2 dakika önce</span>
+                </div>
+                <p className="text-sm text-gray-600 mb-2">🎉 Matematik sınavında sınıf ortalaması %85! Tebrikler everyone!</p>
+                <div className="flex items-center space-x-4 text-xs text-gray-500">
+                  <span>👍 24 beğeni</span>
+                  <span>💬 8 yorum</span>
+                  <span>📈 150 görüntülenme</span>
+                </div>
+              </div>
+
+              <Link href="/demologin">
+                <button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300">
+                  Feed&apos;i Keşfet →
+                </button>
+              </Link>
+            </div>
+
+            {/* Chat Feature */}
+            <div className="bg-white rounded-3xl p-8 shadow-xl border border-gray-100 hover:shadow-2xl transition-all duration-500 group">
+              <div className="flex items-center mb-6">
+                <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-blue-600 rounded-2xl flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-300">
+                  <span className="text-2xl text-white">💬</span>
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold text-gray-900">Sohbet Kanalları</h3>
+                  <p className="text-gray-600">Discord/Slack tarzı iletişim platformu</p>
+                </div>
+              </div>
+
+              <div className="space-y-4 mb-6">
+                <div className="flex items-start space-x-3">
+                  <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-sm">🏫</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900">Sınıf Kanalları</h4>
+                    <p className="text-gray-600 text-sm">Her sınıf için özel iletişim kanalı</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start space-x-3">
+                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-sm">📚</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900">Ders Odaları</h4>
+                    <p className="text-gray-600 text-sm">Ders bazlı grup çalışması ve soru-cevap</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start space-x-3">
+                  <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-sm">🏢</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900">Okul Genel</h4>
+                    <p className="text-gray-600 text-sm">Tüm okul duyuruları ve genel sohbet</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-xl p-4 mb-6">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center space-x-2">
+                    <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                    <span className="text-sm font-medium text-gray-700">10. Sınıf Matematik</span>
+                    <span className="bg-red-500 text-white text-xs rounded-full px-2 py-1">3</span>
+                  </div>
+                  <span className="text-xs text-gray-500">Aktif</span>
+                </div>
+                <p className="text-sm text-gray-600 mb-2">👨‍🏫 Öğretmen: Yarınki sınav için çalışma grubu kuruldu...</p>
+                <div className="flex items-center space-x-4 text-xs text-gray-500">
+                  <span>👥 28 üye</span>
+                  <span>💬 15 yeni mesaj</span>
+                </div>
+              </div>
+
+              <Link href="/demologin">
+                <button className="w-full bg-gradient-to-r from-green-600 to-blue-600 text-white py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300">
+                  Sohbetlere Katıl →
+                </button>
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* Stats Section */}
+        <div className="mt-32 mb-20">
+          <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl p-12 text-white text-center">
+            <h2 className="text-3xl font-bold mb-8">Platformumuzun Etkisi</h2>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+              <div>
+                <div className="text-4xl font-bold mb-2">10,000+</div>
+                <div className="text-blue-100">Aktif Öğrenci</div>
+              </div>
+              <div>
+                <div className="text-4xl font-bold mb-2">500+</div>
+                <div className="text-blue-100">Öğretmen</div>
+              </div>
+              <div>
+                <div className="text-4xl font-bold mb-2">50,000+</div>
+                <div className="text-blue-100">Analiz Edilmiş Sınav</div>
+              </div>
+              <div>
+                <div className="text-4xl font-bold mb-2">98%</div>
+                <div className="text-blue-100">Memnuniyet Oranı</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* How it Works */}
         <div id="how-it-works" className="mt-20">
           <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
@@ -237,35 +362,371 @@ export default function Home() {
           </div>
         </div>
 
-        {/* CTA Section */}
-        <div className="mt-20 text-center">
-          <div className="bg-blue-600 text-white rounded-lg p-8">
-            <h2 className="text-3xl font-bold mb-4">
-              Hemen Denemeye Başlayın
+        {/* FAQ Section */}
+        <div className="mt-32 mb-20">
+          <div className="text-center mb-16">
+            <span className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-yellow-100 to-orange-100 text-orange-800 rounded-full text-sm font-medium mb-4">
+              ❓ Sıkça Sorulan Sorular
+            </span>
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              Merak Ettiğiniz Her Şey
             </h2>
-            <p className="text-xl mb-6 opacity-90">
-              Ücretsiz demo ile tüm özellikleri test edin.
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              EduGradeLab hakkında en çok sorulan sorular ve cevapları
             </p>
-            <Link href="/demologin">
-              <button className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
-                Demo Başlat
-              </button>
-            </Link>
+          </div>
+
+          <div className="max-w-4xl mx-auto">
+            <div className="space-y-6">
+              {/* FAQ 1 */}
+              <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <h3 className="text-xl font-bold text-gray-900 mb-3">
+                      EduGradeLab tam olarak nedir ve nasıl çalışır?
+                    </h3>
+                    <p className="text-gray-600 leading-relaxed">
+                      EduGradeLab, yapay zeka destekli bir sınav analiz platformudur. Sınav kağıtlarınızı fotoğrafını çekerek yüklersiniz,
+                      gelişmiş OCR teknolojisi metni çıkarır, GPT-4 tabanlı yapay zeka cevapları analiz eder ve size detaylı raporlar sunar.
+                      Ayrıca feed ve sohbet özellikleriyle sosyal öğrenme deneyimi yaşarsınız.
+                    </p>
+                  </div>
+                  <div className="ml-4 flex-shrink-0">
+                    <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                      <span className="text-lg">🤖</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* FAQ 2 */}
+              <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <h3 className="text-xl font-bold text-gray-900 mb-3">
+                      Güvenlik ve gizlilik nasıl sağlanıyor?
+                    </h3>
+                    <p className="text-gray-600 leading-relaxed">
+                      Tüm verileriniz end-to-end şifreleme ile korunur. GDPR uyumlu çalışırız, fotoğraflarınız analiz edildikten sonra
+                      otomatik olarak silinir ve hiçbir kişisel veriniz üçüncü kişilerle paylaşılmaz. Demo modunda ise hiçbir veri kaydedilmez.
+                    </p>
+                  </div>
+                  <div className="ml-4 flex-shrink-0">
+                    <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                      <span className="text-lg">🔒</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* FAQ 3 */}
+              <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <h3 className="text-xl font-bold text-gray-900 mb-3">
+                      Feed ve sohbet özellikleri nasıl kullanılıyor?
+                    </h3>
+                    <p className="text-gray-600 leading-relaxed">
+                      Feed bölümünde öğretmen duyuruları, öğrenci başarıları, etkinlikler ve AI önerilerini görürsünüz.
+                      Sohbet kanallarında sınıf arkadaşlarınızla ve öğretmenlerinizle dersler hakkında konuşabilir,
+                      çalışma grupları oluşturabilir ve sorularınızı paylaşabilirsiniz.
+                    </p>
+                  </div>
+                  <div className="ml-4 flex-shrink-0">
+                    <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                      <span className="text-lg">💬</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* FAQ 4 */}
+              <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <h3 className="text-xl font-bold text-gray-900 mb-3">
+                      Demo sürümünde neler yapabilirim?
+                    </h3>
+                    <p className="text-gray-600 leading-relaxed">
+                      Demo sürümünde tüm özellikleri test edebilirsiniz: OCR tarama, yapay zeka analizi, detaylı raporlar,
+                      feed paylaşımları, sohbet kanalları ve rol bazlı paneller (öğrenci, öğretmen, admin).
+                      Demo için sadece reCAPTCHA doğrulaması yeterlidir, email gerektirmez.
+                    </p>
+                  </div>
+                  <div className="ml-4 flex-shrink-0">
+                    <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
+                      <span className="text-lg">🎯</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* FAQ 5 */}
+              <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <h3 className="text-xl font-bold text-gray-900 mb-3">
+                      Hangi cihazları destekliyorsunuz?
+                    </h3>
+                    <p className="text-gray-600 leading-relaxed">
+                      EduGradeLab tüm modern cihazlarda çalışır: Windows, Mac, Linux bilgisayarlar, iOS ve Android
+                      mobil cihazlar. Responsive tasarım sayesinde her ekran boyutunda mükemmel deneyim sunar.
+                    </p>
+                  </div>
+                  <div className="ml-4 flex-shrink-0">
+                    <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                      <span className="text-lg">📱</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* FAQ 6 */}
+              <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <h3 className="text-xl font-bold text-gray-900 mb-3">
+                      Fiyatlandırma nasıl işliyor?
+                    </h3>
+                    <p className="text-gray-600 leading-relaxed">
+                      Şu anda demo tamamen ücretsizdir. Gelecekte okul bazında uygun fiyatlı abonelik modelleri
+                      planlıyoruz. Öğretmenler ve öğrenciler için her zaman erişilebilir olmayı hedefliyoruz.
+                    </p>
+                  </div>
+                  <div className="ml-4 flex-shrink-0">
+                    <div className="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
+                      <span className="text-lg">💰</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Testimonials Section */}
+        <div className="mt-32 mb-20">
+          <div className="text-center mb-16">
+            <span className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-green-100 to-blue-100 text-green-800 rounded-full text-sm font-medium mb-4">
+              💬 Kullanıcı Yorumları
+            </span>
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              Kullanıcılarımız Ne Diyor?
+            </h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              EduGradeLab&apos;i deneyimleyen öğretmen ve öğrencilerin görüşleri
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300">
+              <div className="flex items-center mb-4">
+                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                  <span className="text-xl">👩‍🏫</span>
+                </div>
+                <div>
+                  <h4 className="font-bold text-gray-900">Ayşe Yılmaz</h4>
+                  <p className="text-sm text-gray-600">Matematik Öğretmeni</p>
+                </div>
+              </div>
+              <div className="flex mb-3">
+                {[...Array(5)].map((_, i) => (
+                  <span key={i} className="text-yellow-400">⭐</span>
+                ))}
+              </div>
+              <p className="text-gray-600">
+                &ldquo;EduGradeLab sayesinde sınav kağıtlarını değerlendirme sürecim 10 kat hızlandı. Feed özelliğiyle öğrencilerle daha iyi iletişim kuruyorum.&rdquo;
+              </p>
+            </div>
+
+            <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300">
+              <div className="flex items-center mb-4">
+                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mr-3">
+                  <span className="text-xl">👨‍🎓</span>
+                </div>
+                <div>
+                  <h4 className="font-bold text-gray-900">Mehmet Demir</h4>
+                  <p className="text-sm text-gray-600">Lise Öğrencisi</p>
+                </div>
+              </div>
+              <div className="flex mb-3">
+                {[...Array(5)].map((_, i) => (
+                  <span key={i} className="text-yellow-400">⭐</span>
+                ))}
+              </div>
+              <p className="text-gray-600">
+                &ldquo;Sohbet kanallarında arkadaşlarımla çalışmak çok kolaylaştı. AI analizleri sayesinde zayıf olduğum konuları anında görüyorum.&rdquo;
+              </p>
+            </div>
+
+            <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300">
+              <div className="flex items-center mb-4">
+                <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mr-3">
+                  <span className="text-xl">👩‍💼</span>
+                </div>
+                <div>
+                  <h4 className="font-bold text-gray-900">Zeynep Kaya</h4>
+                  <p className="text-sm text-gray-600">Okul Müdürü</p>
+                </div>
+              </div>
+              <div className="flex mb-3">
+                {[...Array(5)].map((_, i) => (
+                  <span key={i} className="text-yellow-400">⭐</span>
+                ))}
+              </div>
+              <p className="text-gray-600">
+                &ldquo;Okulumuzda EduGradeLab&apos;i kullanmaya başladığımızdan beri hem öğretmenler hem öğrenciler çok memnun. Admin paneli çok kullanışlı.&rdquo;
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Enhanced CTA Section */}
+        <div className="mt-20 mb-20">
+          <div className="relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 opacity-90"></div>
+            <div className="relative bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl p-12 text-white text-center">
+              <div className="absolute inset-0 bg-black opacity-10"></div>
+              <div className="relative z-10">
+                <h2 className="text-4xl md:text-5xl font-bold mb-6">
+                  Eğitimi Birlikte Dönüştürelim
+                </h2>
+                <p className="text-xl md:text-2xl mb-8 opacity-90 max-w-3xl mx-auto">
+                  Yapay zeka destekli sınav analizi ve sosyal öğrenme platformumuzla tanışın.
+                  Ücretsiz demo ile sınırsız keşfedin!
+                </p>
+
+                <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
+                  <Link href="/demologin">
+                    <button className="bg-white text-blue-600 px-8 py-4 rounded-xl font-bold hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 shadow-lg">
+                      🚀 Hemen Demo Başlat
+                    </button>
+                  </Link>
+                  <Link href="/features">
+                    <button className="border-2 border-white text-white px-8 py-4 rounded-xl font-bold hover:bg-white hover:text-blue-600 transition-all duration-300">
+                      📋 Tüm Özellikler
+                    </button>
+                  </Link>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+                  <div className="text-center">
+                    <div className="text-3xl mb-2">⏱️</div>
+                    <div className="font-semibold">Hızlı Kurulum</div>
+                    <div className="text-sm opacity-75">5 dakikada başlayın</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-3xl mb-2">🎯</div>
+                    <div className="font-semibold">Kolay Kullanım</div>
+                    <div className="text-sm opacity-75">Eğitim gerektirmez</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-3xl mb-2">📈</div>
+                    <div className="font-semibold">Anlık Sonuçlar</div>
+                    <div className="text-sm opacity-75">Saniyeler içinde analiz</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Final Trust Section */}
+        <div className="mt-20 mb-20">
+          <div className="bg-white rounded-3xl p-8 shadow-lg border border-gray-100">
+            <div className="text-center mb-8">
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                Güven ve Kalite Standartlarımız
+              </h3>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+              <div className="text-center">
+                <div className="text-4xl mb-2">🔒</div>
+                <div className="font-semibold text-gray-900">Güvenli</div>
+                <div className="text-sm text-gray-600">End-to-end şifreleme</div>
+              </div>
+              <div className="text-center">
+                <div className="text-4xl mb-2">⚡</div>
+                <div className="font-semibold text-gray-900">Hızlı</div>
+                <div className="text-sm text-gray-600">Saniyeler içinde sonuç</div>
+              </div>
+              <div className="text-center">
+                <div className="text-4xl mb-2">🌍</div>
+                <div className="font-semibold text-gray-900">Erişilebilir</div>
+                <div className="text-sm text-gray-600">Her cihazda çalışır</div>
+              </div>
+              <div className="text-center">
+                <div className="text-4xl mb-2">🎓</div>
+                <div className="font-semibold text-gray-900">Profesyonel</div>
+                <div className="text-sm text-gray-600">Eğitimciler için tasarlandı</div>
+              </div>
+            </div>
           </div>
         </div>
       </main>
 
-      {/* Footer */}
+      {/* Enhanced Footer */}
       <footer className="bg-gray-900 text-white mt-20">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="text-center">
-            <h3 className="text-2xl font-bold mb-4">EduGradeLab</h3>
-            <p className="text-gray-400 mb-4">
-              Yapay Zeka Destekli Sınav Analiz Platformu
-            </p>
-            <p className="text-gray-500 text-sm">
-              © 2024 EduGradeLab. Tüm hakları saklıdır.
-            </p>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+            {/* Company */}
+            <div>
+              <div className="flex items-center space-x-2 mb-4">
+                <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">EG</span>
+                </div>
+                <h3 className="text-xl font-bold">EduGradeLab</h3>
+              </div>
+              <p className="text-gray-400 text-sm">
+                Yapay zeka destekli sınav analizi ve sosyal öğrenme platformu
+              </p>
+            </div>
+
+            {/* Features */}
+            <div>
+              <h4 className="font-semibold mb-4">Özellikler</h4>
+              <ul className="space-y-2 text-sm text-gray-400">
+                <li><Link href="#features" className="hover:text-white transition-colors">AI Analizi</Link></li>
+                <li><Link href="#" className="hover:text-white transition-colors">Feed & Duvar</Link></li>
+                <li><Link href="#" className="hover:text-white transition-colors">Sohbet Kanalları</Link></li>
+                <li><Link href="#" className="hover:text-white transition-colors">Güvenlik</Link></li>
+              </ul>
+            </div>
+
+            {/* Company */}
+            <div>
+              <h4 className="font-semibold mb-4">Kurumsal</h4>
+              <ul className="space-y-2 text-sm text-gray-400">
+                <li><Link href="#" className="hover:text-white transition-colors">Hakkımızda</Link></li>
+                <li><Link href="#" className="hover:text-white transition-colors">İletişim</Link></li>
+                <li><Link href="#" className="hover:text-white transition-colors">Gizlilik Politikası</Link></li>
+                <li><Link href="#" className="hover:text-white transition-colors">Kullanım Şartları</Link></li>
+              </ul>
+            </div>
+
+            {/* Connect */}
+            <div>
+              <h4 className="font-semibold mb-4">Bağlantı</h4>
+              <ul className="space-y-2 text-sm text-gray-400">
+                <li><Link href="/demologin" className="hover:text-white transition-colors">Demo Başlat</Link></li>
+                <li><Link href="/features" className="hover:text-white transition-colors">Özellikler</Link></li>
+                <li><Link href="/document" className="hover:text-white transition-colors">Belgeler</Link></li>
+                <li><Link href="#" className="hover:text-white transition-colors">Destek</Link></li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="border-t border-gray-800 pt-8">
+            <div className="flex flex-col md:flex-row justify-between items-center">
+              <div className="text-gray-400 text-sm mb-4 md:mb-0">
+                © 2024 EduGradeLab. Tüm hakları saklıdır.
+              </div>
+              <div className="flex space-x-6 text-sm text-gray-400">
+                <span>🔒 Güvenli Ödeme</span>
+                <span>🌍 Türkiye</span>
+                <span>📧 info@edugradelab.com</span>
+              </div>
+            </div>
           </div>
         </div>
       </footer>

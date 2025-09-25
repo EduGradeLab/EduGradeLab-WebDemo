@@ -1,18 +1,16 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Link from 'next/link'
 import RoleSidebar from '@/components/RoleSidebar'
 import {
   demoStudents,
-  getStudentById,
   getGradesByStudentId,
   getAnalyticsByStudentId,
   getClassById
 } from '@/lib/demo-data'
 
 export default function StudentProgress() {
-  const [currentStudent, setCurrentStudent] = useState(demoStudents[0])
+  const [currentStudent] = useState(demoStudents[0])
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
@@ -39,7 +37,6 @@ export default function StudentProgress() {
   }
 
   const student = currentStudent
-  const grades = getGradesByStudentId(student.id)
   const analytics = getAnalyticsByStudentId(student.id)
   const studentClass = getClassById(student.classId)
 

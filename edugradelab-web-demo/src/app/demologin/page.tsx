@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Script from 'next/script'
 import Link from 'next/link'
+import Navbar from '@/components/Navbar'
 
 declare global {
   interface Window {
@@ -254,7 +255,10 @@ export default function DemoLogin() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+      <Navbar showDemoButton={false} />
+
+      <div className="flex items-center justify-center p-4 min-h-screen">
       {/* reCAPTCHA Script */}
       <Script 
         src={`https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`}
@@ -491,6 +495,7 @@ export default function DemoLogin() {
             <span>Ana Sayfaya Dön</span>
           </Link>
         </div>
+      </div>
       </div>
     </div>
   )

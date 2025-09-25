@@ -5,13 +5,12 @@ import Link from 'next/link'
 import RoleSidebar from '@/components/RoleSidebar'
 import {
   demoStudents,
-  getStudentById,
   demoClasses,
   getClassById
 } from '@/lib/demo-data'
 
 export default function StudentClasses() {
-  const [currentStudent, setCurrentStudent] = useState(demoStudents[0])
+  const [currentStudent] = useState(demoStudents[0])
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {

@@ -5,14 +5,13 @@ import Link from 'next/link'
 import RoleSidebar from '@/components/RoleSidebar'
 import {
   demoStudents,
-  getStudentById,
   getAchievementsByStudentId,
   getStudentBadges,
   demoBadges
 } from '@/lib/demo-data'
 
 export default function StudentAchievements() {
-  const [currentStudent, setCurrentStudent] = useState(demoStudents[0])
+  const [currentStudent] = useState(demoStudents[0])
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
@@ -43,16 +42,6 @@ export default function StudentAchievements() {
   const badges = getStudentBadges(student.id)
   const totalBadges = demoBadges.length
   const unlockedBadges = badges.length
-
-  const getAchievementTypeIcon = (type: string) => {
-    switch (type) {
-      case 'grade': return '📊'
-      case 'attendance': return '📅'
-      case 'participation': return '🤝'
-      case 'improvement': return '📈'
-      default: return '🏆'
-    }
-  }
 
   const getAchievementTypeText = (type: string) => {
     switch (type) {

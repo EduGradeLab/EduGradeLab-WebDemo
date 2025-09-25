@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
       if (isNaN(jobIdInt)) {
         return NextResponse.json({ error: 'Invalid job ID format' }, { status: 400 })
       }
-    } catch (parseError) {
+    } catch {
       return NextResponse.json({ error: 'Invalid job ID' }, { status: 400 })
     }
 

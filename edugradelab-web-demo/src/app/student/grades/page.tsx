@@ -4,14 +4,13 @@ import { useState, useEffect } from 'react'
 import RoleSidebar from '@/components/RoleSidebar'
 import {
   demoStudents,
-  getStudentById,
   getGradesByStudentId,
   getClassById,
   demoExams
 } from '@/lib/demo-data'
 
 export default function StudentGrades() {
-  const [currentStudent, setCurrentStudent] = useState(demoStudents[0])
+  const [currentStudent] = useState(demoStudents[0])
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
