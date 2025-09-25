@@ -78,7 +78,7 @@ export default function TeacherClassDetail() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex sidebar-overflow-fix">
       <RoleSidebar role="teacher" activePage="classes" />
       <div className="flex-1 lg:ml-0 p-6 lg:p-8 min-h-screen">
         <div className="max-w-6xl mx-auto">
