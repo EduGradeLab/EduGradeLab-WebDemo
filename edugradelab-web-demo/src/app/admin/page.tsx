@@ -50,10 +50,7 @@ export default function AdminDashboard() {
     ? Math.round(teacherPerformance.reduce((sum, teacher) => sum + teacher.avgPerformance, 0) / teacherPerformance.length)
     : 0
 
-  const avgGradeSystem = classStats.length > 0
-    ? Math.round(classStats.reduce((sum, stat) => sum + stat.avgGrade, 0) / classStats.length)
-    : 0
-
+  
   const getPerformanceColor = (score: number) => {
     if (score >= 90) return 'text-green-600 bg-green-100'
     if (score >= 80) return 'text-blue-600 bg-blue-100'

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY
     const secretKey = process.env.RECAPTCHA_SECRET_KEY

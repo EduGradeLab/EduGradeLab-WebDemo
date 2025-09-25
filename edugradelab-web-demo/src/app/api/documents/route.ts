@@ -82,8 +82,8 @@ export async function GET(request: NextRequest) {
 
     // Get OCR jobs and results using proper table relationships
     const examImageIds = examImages.map(img => img.id)
-    let ocrJobs: any[] = []
-    let ocrResults: any[] = []
+    let ocrJobs: Awaited<ReturnType<typeof prisma.ocr_jobs.findMany>> = []
+    let ocrResults: Awaited<ReturnType<typeof prisma.ocr_results.findMany>> = []
 
     if (examImageIds.length > 0) {
       try {
