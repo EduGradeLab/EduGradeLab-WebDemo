@@ -276,8 +276,8 @@ export default function DemoHome() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex">
       <Sidebar activePage="upload" />
       
-      <div className="flex-1 lg:ml-0 p-4 lg:p-8 min-h-screen">
-        <div className="max-w-7xl mx-auto">
+      <div className="flex-1 lg:ml-0 p-6 lg:p-8 min-h-screen">
+        <div className="max-w-6xl mx-auto">
           {/* Header Section */}
           <div className="mb-8">
             <div className="flex items-center space-x-3 mb-4">

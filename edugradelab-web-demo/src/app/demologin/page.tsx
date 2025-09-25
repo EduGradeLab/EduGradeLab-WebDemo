@@ -16,6 +16,7 @@ declare global {
 
 export default function DemoLogin() {
   const [email, setEmail] = useState('')
+  const [selectedRole, setSelectedRole] = useState<'demo' | 'student' | 'teacher' | 'admin'>('demo')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [message, setMessage] = useState('')
   const [messageType, setMessageType] = useState<'success' | 'error' | 'info'>('info')
@@ -218,9 +219,29 @@ export default function DemoLogin() {
         }
       }
       
-      debugLog('Login successful, redirecting to demo home')
+      debugLog('Login successful, redirecting based on role')
+
+      // Rol bilgisini localStorage'a kaydet
+      localStorage.setItem('demoRole', selectedRole)
+
+      // Role göre yönlendirme
+      let redirectPath = '/demohome'
+      switch (selectedRole) {
+        case 'student':
+          redirectPath = '/student'
+          break
+        case 'teacher':
+          redirectPath = '/teacher'
+          break
+        case 'admin':
+          redirectPath = '/admin'
+          break
+        default:
+          redirectPath = '/demohome'
+      }
+
       setTimeout(() => {
-        router.push('/demohome')
+        router.push(redirectPath)
       }, 1500)
 
     } catch (error: any) {
@@ -281,6 +302,67 @@ export default function DemoLogin() {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Role Selection */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-3">
+                Demo Rolü Seçin
+              </label>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setSelectedRole('demo')}
+                  className={`p-4 rounded-xl border-2 transition-all duration-200 text-center ${
+                    selectedRole === 'demo'
+                      ? 'border-blue-500 bg-blue-50 text-blue-700 shadow-sm'
+                      : 'border-gray-200 hover:border-gray-300 bg-white text-gray-700'
+                  }`}
+                >
+                  <div className="text-2xl mb-1">🚀</div>
+                  <div className="font-semibold text-sm">Demo</div>
+                  <div className="text-xs mt-1 opacity-75">Temel OCR</div>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedRole('student')}
+                  className={`p-4 rounded-xl border-2 transition-all duration-200 text-center ${
+                    selectedRole === 'student'
+                      ? 'border-green-500 bg-green-50 text-green-700 shadow-sm'
+                      : 'border-gray-200 hover:border-gray-300 bg-white text-gray-700'
+                  }`}
+                >
+                  <div className="text-2xl mb-1">🎓</div>
+                  <div className="font-semibold text-sm">Öğrenci</div>
+                  <div className="text-xs mt-1 opacity-75">Not & İlerleme</div>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedRole('teacher')}
+                  className={`p-4 rounded-xl border-2 transition-all duration-200 text-center ${
+                    selectedRole === 'teacher'
+                      ? 'border-purple-500 bg-purple-50 text-purple-700 shadow-sm'
+                      : 'border-gray-200 hover:border-gray-300 bg-white text-gray-700'
+                  }`}
+                >
+                  <div className="text-2xl mb-1">📚</div>
+                  <div className="font-semibold text-sm">Öğretmen</div>
+                  <div className="text-xs mt-1 opacity-75">Sınıf & Notlama</div>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedRole('admin')}
+                  className={`p-4 rounded-xl border-2 transition-all duration-200 text-center ${
+                    selectedRole === 'admin'
+                      ? 'border-red-500 bg-red-50 text-red-700 shadow-sm'
+                      : 'border-gray-200 hover:border-gray-300 bg-white text-gray-700'
+                  }`}
+                >
+                  <div className="text-2xl mb-1">⚙️</div>
+                  <div className="font-semibold text-sm">Admin</div>
+                  <div className="text-xs mt-1 opacity-75">Yönetim</div>
+                </button>
+              </div>
+            </div>
+
             {/* Email Input */}
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">

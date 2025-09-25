@@ -318,10 +318,10 @@ export default function DocumentPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex">
       <Sidebar activePage="documents" />
-      
-      <div className="flex-1 lg:ml-0 p-4 lg:p-8 min-h-screen">
+
+      <div className="flex-1 lg:ml-0 p-6 lg:p-8 min-h-screen">
         <div className="max-w-6xl mx-auto">
           {/* Header */}
           <div className="mb-8">
@@ -347,55 +347,55 @@ export default function DocumentPage() {
           </div>
 
           {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <div className="bg-white rounded-2xl p-6 shadow-lg border border-blue-100">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <div className="bg-white/80 backdrop-blur-md rounded-2xl p-6 border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 card-hover">
               <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
-                  <span className="text-white text-xl">📊</span>
+                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
+                  <span className="text-white text-lg">📊</span>
                 </div>
                 <div>
                   <p className="text-gray-600 text-sm">Toplam</p>
-                  <p className="text-2xl font-bold text-gray-900">{documents.length}</p>
+                  <p className="text-xl font-bold text-gray-900">{documents.length}</p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl p-6 shadow-lg border border-green-100">
+            <div className="bg-white/80 backdrop-blur-md rounded-2xl p-6 border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 card-hover">
               <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center">
-                  <span className="text-white text-xl">✅</span>
+                <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center">
+                  <span className="text-white text-lg">✅</span>
                 </div>
                 <div>
                   <p className="text-gray-600 text-sm">Tamamlanan</p>
-                  <p className="text-2xl font-bold text-gray-900">
+                  <p className="text-xl font-bold text-gray-900">
                     {documents.filter(d => d.status === 'completed').length}
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl p-6 shadow-lg border border-yellow-100">
+            <div className="bg-white/80 backdrop-blur-md rounded-2xl p-6 border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 card-hover">
               <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-xl flex items-center justify-center">
-                  <span className="text-white text-xl">⏳</span>
+                <div className="w-10 h-10 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-xl flex items-center justify-center">
+                  <span className="text-white text-lg">⏳</span>
                 </div>
                 <div>
                   <p className="text-gray-600 text-sm">İşleniyor</p>
-                  <p className="text-2xl font-bold text-gray-900">
+                  <p className="text-xl font-bold text-gray-900">
                     {documents.filter(d => d.status === 'processing' || d.status === 'analyzing' || d.status === 'pending' || d.status === 'uploaded').length}
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl p-6 shadow-lg border border-purple-100">
+            <div className="bg-white/80 backdrop-blur-md rounded-2xl p-6 border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 card-hover">
               <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center">
-                  <span className="text-white text-xl">📈</span>
+                <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center">
+                  <span className="text-white text-lg">📈</span>
                 </div>
                 <div>
                   <p className="text-gray-600 text-sm">Ort. Puan</p>
-                  <p className="text-2xl font-bold text-gray-900">
+                  <p className="text-xl font-bold text-gray-900">
                     {(() => {
                       const scoredDocs = documents.filter(d => d.score !== undefined)
                       if (scoredDocs.length === 0) return 0
@@ -409,7 +409,7 @@ export default function DocumentPage() {
           </div>
 
           {/* Search and Filter */}
-          <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 mb-6">
+          <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-xl border border-white/20 p-8 mb-6 hover:shadow-xl transition-all duration-300 card-hover">
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex-1">
                 <input
@@ -417,14 +417,14 @@ export default function DocumentPage() {
                   placeholder="Dosya adıyla ara..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                 />
               </div>
               <div className="sm:w-48">
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                 >
                   <option value="all">Tüm Durumlar</option>
                   <option value="completed">Tamamlanan</option>
@@ -436,7 +436,7 @@ export default function DocumentPage() {
           </div>
 
           {/* Filter Tabs */}
-          <div className="flex space-x-2 mb-6 p-1 bg-white rounded-xl border border-gray-200 w-fit">
+          <div className="flex flex-wrap gap-2 mb-6 p-1 bg-white rounded-xl border border-gray-200 shadow-sm">
             {[
               { key: 'all', label: 'Tümü' },
               { key: 'completed', label: 'Tamamlanan' },
@@ -447,9 +447,9 @@ export default function DocumentPage() {
                 key={tab.key}
                 onClick={() => setStatusFilter(tab.key)}
                 disabled={isFilterLoading}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                  statusFilter === tab.key 
-                    ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-md' 
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 button-hover ${
+                  statusFilter === tab.key
+                    ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-md'
                     : 'text-gray-600 hover:bg-gray-50'
                 } disabled:opacity-50 disabled:cursor-not-allowed`}
               >
@@ -479,32 +479,32 @@ export default function DocumentPage() {
                 </p>
                 <a
                   href="/demohome"
-                  className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5"
+                  className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 button-hover"
                 >
                   📤 Dosya Yükle
                 </a>
               </div>
             ) : (
               filteredDocuments.map((doc) => (
-                <div key={doc.id} className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300">
-                  <div className="flex items-start justify-between">
+                <div key={doc.id} className="bg-white/80 backdrop-blur-md rounded-2xl shadow-xl border border-white/20 p-8 hover:shadow-xl transition-all duration-300 card-hover">
+                  <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
                     <div className="flex items-start space-x-4 flex-1">
                       <div className="w-12 h-12 bg-gradient-to-br from-blue-100 to-purple-100 rounded-xl flex items-center justify-center">
                         <span className="text-2xl">{getFileIcon(doc.fileType)}</span>
                       </div>
-                      
+
                       <div className="flex-1">
-                        <h3 className="text-xl font-semibold text-gray-900 mb-1">{getDisplayName(doc)}</h3>
-                        <div className="flex items-center space-x-4 text-sm text-gray-600 mb-3">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-1">{getDisplayName(doc)}</h3>
+                        <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-sm text-gray-600 mb-3">
                           <span>📅 {formatDate(doc.uploadTime)}</span>
                           <span>💾 {getFileSize(doc)}</span>
                           {formatProcessingTime(doc.processingTime) && (
                             <span>⏱️ {formatProcessingTime(doc.processingTime)}</span>
                           )}
                         </div>
-                        
+
                         {doc.status === 'completed' && doc.score !== undefined && (
-                          <div className="flex items-center space-x-6">
+                          <div className="flex flex-wrap items-center gap-4">
                             <div className="flex items-center space-x-2">
                               <span className="text-sm text-gray-600">Puan:</span>
                               <span className="text-lg font-bold text-blue-600">{doc.score}/100</span>
@@ -519,14 +519,14 @@ export default function DocumentPage() {
                         )}
                       </div>
                     </div>
-                    
+
                     <div className="flex items-center space-x-3">
                       {getStatusBadge(doc.status)}
                       {doc.status === 'completed' && (
-                        <button 
+                        <button
                           onClick={() => handleDetailClick(doc)}
                           disabled={loadingDocumentId === doc.id}
-                          className="px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:shadow-md transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:shadow-md transition-all duration-200 button-hover disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           {loadingDocumentId === doc.id ? '⏳ Yükleniyor...' : '📊 Detay'}
                         </button>
@@ -570,8 +570,8 @@ export default function DocumentPage() {
 
       {/* Document Detail Modal */}
       {selectedDocument && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto custom-scrollbar">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 animate-fade-in">
+          <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto custom-scrollbar animate-slide-in-up border border-white/20">
             <div className="p-4 sm:p-6">
               <div className="flex justify-between items-start mb-6">
                 <div className="flex-1 mr-4">
@@ -618,7 +618,7 @@ export default function DocumentPage() {
                       </h4>
                       <button
                         onClick={() => selectedDocument.ocrText && navigator.clipboard.writeText(selectedDocument.ocrText)}
-                        className="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors flex items-center space-x-1"
+                        className="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors flex items-center space-x-1 button-hover"
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
@@ -645,7 +645,7 @@ export default function DocumentPage() {
                       </h4>
                       <button
                         onClick={() => selectedDocument.aiAnalysis && navigator.clipboard.writeText(selectedDocument.aiAnalysis)}
-                        className="px-3 py-1 text-sm bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors flex items-center space-x-1"
+                        className="px-3 py-1 text-sm bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors flex items-center space-x-1 button-hover"
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
@@ -730,7 +730,7 @@ export default function DocumentPage() {
               <div className="mt-6 flex flex-col sm:flex-row justify-end gap-3">
                 <button
                   onClick={() => setSelectedDocument(null)}
-                  className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors order-2 sm:order-1"
+                  className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors order-2 sm:order-1 button-hover"
                 >
                   Kapat
                 </button>
@@ -748,7 +748,7 @@ export default function DocumentPage() {
                       document.body.removeChild(a)
                       URL.revokeObjectURL(url)
                     }}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors order-1 sm:order-2 flex items-center space-x-2"
+                    className="px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all duration-300 order-1 sm:order-2 flex items-center space-x-2 button-hover"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707v11a2 2 0 01-2 2z" />
