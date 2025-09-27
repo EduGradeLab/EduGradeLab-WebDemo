@@ -87,13 +87,13 @@ export default function FeedPage() {
             </p>
           </div>
 
-          {/* AI Suggestions */}
+          {/* yapay zeka Suggestions */}
           <div className="ai-suggestion-card mb-8">
             <div className="flex items-center space-x-3 mb-3">
               <div className="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
                 <span className="text-xl">🤖</span>
               </div>
-              <h3 className="text-lg font-semibold">AI Önerileri</h3>
+              <h3 className="text-lg font-semibold">yapay zeka Önerileri</h3>
             </div>
             <p className="text-blue-100">
               Sizin için önerilen içerikler: Matematik sınav sonuçları, sınıf arkadaşlarınızın başarıları ve yaklaştan etkinlikler

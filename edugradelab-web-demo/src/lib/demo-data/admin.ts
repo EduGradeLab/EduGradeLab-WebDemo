@@ -218,7 +218,7 @@ export const demoAdminNotifications = [
     id: '2',
     type: 'info',
     title: 'Yeni Özellik',
-    message: 'AI destekli notlandırma sistemi kullanıma sunuldu.',
+    message: 'yapay zeka destekli notlandırma sistemi kullanıma sunuldu.',
     timestamp: '2024-09-24 18:00:00',
     read: false
   },

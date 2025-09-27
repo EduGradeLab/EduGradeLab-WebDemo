@@ -427,7 +427,7 @@ export default function AdminSettings() {
                       <div className="flex items-center space-x-3">
                         <span className="text-2xl">🤖</span>
                         <div>
-                          <h3 className="font-semibold text-gray-900">AI Servisleri</h3>
+                          <h3 className="font-semibold text-gray-900">Yapay Zeka Servisleri</h3>
                           <p className="text-sm text-gray-600">Yapay zeka destekli not analizi</p>
                         </div>
                       </div>

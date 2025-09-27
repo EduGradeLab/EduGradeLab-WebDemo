@@ -21,7 +21,7 @@ const demoRecentOperations = [
     id: 2,
     jobId: 2,
     filename: 'fizik_lab.pdf',
-    operation: 'AI analizi tamamlandı',
+    operation: 'yapay zeka analizi tamamlandı',
     level: 'INFO',
     status: 'DONE',
     score: 92,
@@ -60,7 +60,7 @@ const demoRecentOperations = [
     id: 5,
     jobId: 5,
     filename: 'tarih_sinavi.jpg',
-    operation: 'AI analizi yapıldı',
+    operation: 'yapay zeka analizi yapıldı',
     level: 'WARNING',
     status: 'DONE',
     score: 65,
@@ -143,7 +143,7 @@ export async function GET(request: Request) {
             break
           case 'DONE':
             status = 'DONE'
-            operation = ocrResult ? 'AI analizi tamamlandı' : 'OCR işlemi tamamlandı'
+            operation = ocrResult ? 'yapay zeka analizi tamamlandı' : 'OCR işlemi tamamlandı'
             break
           case 'ERROR':
             status = 'ERROR'
@@ -154,8 +154,8 @@ export async function GET(request: Request) {
       }
 
       if (ocrResult) {
-        if (!operation.includes('AI analizi')) {
-          operation = 'AI analizi tamamlandı'
+        if (!operation.includes('yapay zeka analizi')) {
+          operation = 'yapay zeka analizi tamamlandı'
         }
       }
 

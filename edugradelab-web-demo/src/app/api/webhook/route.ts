@@ -143,7 +143,7 @@ export async function POST(request: NextRequest) {
       // Continue without failing the webhook
     }
 
-    // If AI analysis is not complete, forward to AI webhook
+    // If yapay zeka analysis is not complete, forward to yapay zeka webhook
     if (ocrText && !aiAnalysis && status !== 'error') {
       try {
         const aiResponse = await fetch(process.env.WEBHOOK_AI_URL!, {
@@ -165,25 +165,25 @@ export async function POST(request: NextRequest) {
               data: {
                 ocr_job_id: jobIdInt,
                 event_type: 'ai_webhook_sent',
-                log_message: 'AI analysis request sent successfully'
+                log_message: 'yapay zeka analysis request sent successfully'
               }
             })
           } catch (logError) {
-            console.error('Error logging AI webhook success:', logError)
+            console.error('Error logging yapay zeka webhook success:', logError)
           }
         }
       } catch (aiError) {
-        console.error('AI webhook error:', aiError)
+        console.error('yapay zeka webhook error:', aiError)
         try {
           await prisma.job_logs.create({
             data: {
               ocr_job_id: jobIdInt,
               event_type: 'ai_webhook_error',
-              log_message: `Failed to send to AI webhook: ${aiError}`
+              log_message: `Failed to send to yapay zeka webhook: ${aiError}`
             }
           })
         } catch (logError) {
-          console.error('Error logging AI webhook error:', logError)
+          console.error('Error logging yapay zeka webhook error:', logError)
         }
       }
     }

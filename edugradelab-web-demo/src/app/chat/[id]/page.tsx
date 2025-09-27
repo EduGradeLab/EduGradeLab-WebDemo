@@ -188,11 +188,11 @@ export default function ChatChannelPage() {
                 ))}
               </div>
 
-              {/* AI Assistant Suggestion */}
+              {/* yapay zeka Assistant Suggestion */}
               <div className="mt-6 p-4 bg-gradient-to-r from-purple-100 to-blue-100 rounded-xl">
                 <div className="flex items-center space-x-2 mb-2">
                   <span className="text-lg">🤖</span>
-                  <h3 className="font-semibold text-gray-900">AI Asistan</h3>
+                  <h3 className="font-semibold text-gray-900">yapay zeka Asistan</h3>
                 </div>
                 <p className="text-sm text-gray-700">
                   Bu kanalda soru soran {messages.filter(m => m.content.includes('?')).length} kişi var.

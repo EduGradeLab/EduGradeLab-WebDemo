@@ -1,7 +1,7 @@
 ---
 applyTo: '**'
 ---
-# AI-Driven Web UI Design Rules (for React/Next.js + Tailwind + ESLint)
+# Yapay Zeka Destekli Web UI Design Rules (for React/Next.js + Tailwind + ESLint)
 
 ## Genel Prensipler
 - **Sadece UI/UX ve tasarım değişiklikleri yap**: Renk, arka plan, font, spacing, padding, border, layout, grid/flex, responsive breakpoints, görsel hiyerarşi, kart ve panel stilleri, animasyonlar, hover/focus efekti, buton görünümü, input/checkbox/radio styling, modals, shadows.

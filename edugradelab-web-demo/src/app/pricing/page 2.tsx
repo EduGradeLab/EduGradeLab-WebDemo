@@ -10,7 +10,7 @@ export default function PricingPage() {
       description: 'Küçük okullar ve özel ders verenler için ideal',
       features: [
         'Aylık 100 sınav analizi',
-        'Temel OCR ve AI değerlendirme',
+        'Temel OCR ve yapay zeka değerlendirme',
         'Standart raporlama',
         'E-posta desteği',
         '1 kullanıcı hesabı'
@@ -26,7 +26,7 @@ export default function PricingPage() {
       description: 'Orta ölçekli eğitim kurumları için',
       features: [
         'Aylık 500 sınav analizi',
-        'Gelişmiş OCR ve AI değerlendirme',
+        'Gelişmiş OCR ve yapay zeka değerlendirme',
         'Detaylı analitik ve raporlama',
         'Öncelikli teknik destek',
         '5 kullanıcı hesabı',
@@ -44,7 +44,7 @@ export default function PricingPage() {
       description: 'Büyük eğitim kurumları ve zincirler için',
       features: [
         'Sınırsız sınav analizi',
-        'Premium OCR ve AI değerlendirme',
+        'Premium OCR ve yapay zeka değerlendirme',
         'Özel raporlama ve dashboard',
         '7/24 dedicated destek',
         'Sınırsız kullanıcı',

@@ -60,7 +60,7 @@ export async function GET(
       // Continue without OCR data if there's an error
     }
 
-    // Calculate real score from AI analysis if it exists
+    // Calculate real score from yapay zeka analysis if it exists
     let score = undefined
     if (ocrResult?.ai_analysis) {
       try {
@@ -94,7 +94,7 @@ export async function GET(
         created_at: ocrJob.created_at.toISOString(),
         updated_at: ocrJob.updated_at.toISOString()
       } : null,
-      // Use real score from AI analysis
+      // Use real score from yapay zeka analysis
       score: score,
       displayName: examImage.filename
         .replace(/\.[^/.]+$/, '')

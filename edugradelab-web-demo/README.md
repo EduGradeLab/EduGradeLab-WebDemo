@@ -1,6 +1,6 @@
 # EduGradeLab Web Demo
 
-AI destekli sınav analizi platformu demo uygulaması.
+yapay zeka destekli sınav analizi platformu demo uygulaması.
 
 ## Özellikler
 
@@ -45,7 +45,7 @@ AI destekli sınav analizi platformu demo uygulaması.
    ```env
    DATABASE_URL="mysql://username:password@localhost:3306/exam_ai_demo"
    WEBHOOK_SCANNER_URL="https://your-scanner-service.com/webhook"
-   WEBHOOK_AI_URL="https://your-ai-service.com/webhook"
+   WEBHOOK_yapay zeka_URL="https://your-ai-service.com/webhook"
    NEXT_PUBLIC_RECAPTCHA_SITE_KEY="your-recaptcha-site-key"
    RECAPTCHA_SECRET_KEY="your-recaptcha-secret-key"
    NEXTAUTH_SECRET="your-nextauth-secret"
@@ -90,7 +90,7 @@ Projede aşağıdaki tablolar bulunur:
 - `users` - Demo kullanıcıları
 - `exam_images` - Yüklenen sınav görüntüleri
 - `ocr_jobs` - OCR işleri ve kuyruk
-- `ocr_results` - OCR sonuçları ve AI analizi
+- `ocr_results` - OCR sonuçları ve yapay zeka analizi
 - `job_logs` - İşlem logları
 - `demo_emails` - Demo e-posta kayıtları
 
@@ -99,7 +99,7 @@ Projede aşağıdaki tablolar bulunur:
 Uygulama, n8n workflow'ları ile entegre çalışır:
 
 1. **Scanner Webhook** - Görüntüleri OCR servisine gönderir
-2. **AI Webhook** - OCR sonuçlarını AI analizi için işler
+2. **yapay zeka Webhook** - OCR sonuçlarını yapay zeka analizi için işler
 3. **Result Webhook** - Analiz sonuçlarını alır ve veritabanına kaydeder
 
 ## Güvenlik
@@ -134,7 +134,7 @@ Production için gerekli değişkenler:
 ```env
 DATABASE_URL="mysql://user:pass@host:3306/db"
 WEBHOOK_SCANNER_URL="https://production-scanner.com/webhook"
-WEBHOOK_AI_URL="https://production-ai.com/webhook"
+WEBHOOK_yapay zeka_URL="https://production-ai.com/webhook"
 NEXT_PUBLIC_RECAPTCHA_SITE_KEY="production-site-key"
 RECAPTCHA_SECRET_KEY="production-secret-key"
 NEXTAUTH_SECRET="production-secret"

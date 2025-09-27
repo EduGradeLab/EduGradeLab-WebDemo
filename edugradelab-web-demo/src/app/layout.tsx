@@ -8,12 +8,12 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "EduGradeLab - AI Destekli Sınav Analizi",
+  title: "EduGradeLab - Yapay Zeka Destekli Sınav Analizi",
   description: "Yapay zeka ile sınav kağıtlarınızı analiz edin. Hızlı, güvenli ve profesyonel sonuçlar.",
   keywords: "sınav analizi, yapay zeka, öğretmen araçları, eğitim teknolojisi",
   authors: [{ name: "EduGradeLab Team" }],
   openGraph: {
-    title: "EduGradeLab - AI Destekli Sınav Analizi",
+    title: "EduGradeLab - Yapay Zeka Destekli Sınav Analizi",
     description: "Yapay zeka ile sınav kağıtlarınızı analiz edin",
     type: "website",
   },

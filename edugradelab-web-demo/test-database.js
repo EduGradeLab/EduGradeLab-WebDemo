@@ -73,7 +73,7 @@ async function testDatabase() {
       data: {
         user_id: testUser.id,
         exam_image_id: examImage.id,
-        status: 'WAITING'
+        status: 'Wyapay zekaTING'
       }
     })
     console.log(`✅ OCR job created with ID: ${ocrJob.id}`)
@@ -84,7 +84,7 @@ async function testDatabase() {
         exam_image_id: examImage.id,
         user_id: testUser.id,
         ocr_text: 'Test OCR text',
-        ai_analysis: 'Test AI analysis',
+        ai_analysis: 'Test yapay zeka analysis',
         webhook_status: 'SUCCESS'
       }
     })

@@ -95,7 +95,7 @@ export default function Home() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                 </svg>
               </div>
-              <h3 className="text-2xl font-bold mb-4 text-gray-900">Akıllı AI Analizi</h3>
+              <h3 className="text-2xl font-bold mb-4 text-gray-900">Akıllı yapay zeka Analizi</h3>
               <p className="text-gray-600 leading-relaxed">
                 GPT-4 tabanlı yapay zeka ile cevapları analiz edin, puanları otomatik hesaplayın.
               </p>
@@ -204,7 +204,7 @@ export default function Home() {
                     <span className="text-sm">🤖</span>
                   </div>
                   <div>
-                    <h4 className="font-semibold text-gray-900">AI Önerileri</h4>
+                    <h4 className="font-semibold text-gray-900">yapay zeka Önerileri</h4>
                     <p className="text-gray-600 text-sm">Kişiselleştirilmiş içerik önerileri ve analizler</p>
                   </div>
                 </div>
@@ -427,7 +427,7 @@ export default function Home() {
                       Feed ve sohbet özellikleri nasıl kullanılıyor?
                     </h3>
                     <p className="text-gray-600 leading-relaxed">
-                      Feed bölümünde öğretmen duyuruları, öğrenci başarıları, etkinlikler ve AI önerilerini görürsünüz.
+                      Feed bölümünde öğretmen duyuruları, öğrenci başarıları, etkinlikler ve yapay zeka önerilerini görürsünüz.
                       Sohbet kanallarında sınıf arkadaşlarınızla ve öğretmenlerinizle dersler hakkında konuşabilir,
                       çalışma grupları oluşturabilir ve sorularınızı paylaşabilirsiniz.
                     </p>
@@ -555,7 +555,7 @@ export default function Home() {
                 ))}
               </div>
               <p className="text-gray-600">
-                &ldquo;Sohbet kanallarında arkadaşlarımla çalışmak çok kolaylaştı. AI analizleri sayesinde zayıf olduğum konuları anında görüyorum.&rdquo;
+                &ldquo;Sohbet kanallarında arkadaşlarımla çalışmak çok kolaylaştı. yapay zeka analizleri sayesinde zayıf olduğum konuları anında görüyorum.&rdquo;
               </p>
             </div>
 
@@ -686,7 +686,7 @@ export default function Home() {
             <div>
               <h4 className="font-semibold mb-4">Özellikler</h4>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li><Link href="#features" className="hover:text-white transition-colors">AI Analizi</Link></li>
+                <li><Link href="#features" className="hover:text-white transition-colors">yapay zeka Analizi</Link></li>
                 <li><Link href="#" className="hover:text-white transition-colors">Feed & Duvar</Link></li>
                 <li><Link href="#" className="hover:text-white transition-colors">Sohbet Kanalları</Link></li>
                 <li><Link href="#" className="hover:text-white transition-colors">Güvenlik</Link></li>

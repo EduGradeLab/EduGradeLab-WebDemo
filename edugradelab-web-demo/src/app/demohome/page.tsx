@@ -82,7 +82,7 @@ export default function DemoHome() {
           })
           
           switch (jobData.job.status) {
-            case 'WAITING':
+            case 'Wyapay zekaTING':
               setUploadProgress({
                 progress: 100,
                 status: 'processing',
@@ -94,7 +94,7 @@ export default function DemoHome() {
               setUploadProgress({
                 progress: 100,
                 status: 'analyzing',
-                message: 'OCR ve AI analizi yapılıyor...'
+                message: 'OCR ve yapay zeka analizi yapılıyor...'
               })
               break
               
@@ -112,7 +112,7 @@ export default function DemoHome() {
               if (jobData.result) {
                 setCurrentOCRResult({
                   ocrText: jobData.result.ocr_text || 'OCR metni bulunamadı',
-                  aiAnalysis: jobData.result.ai_analysis || 'AI analizi bulunamadı',
+                  aiAnalysis: jobData.result.ai_analysis || 'yapay zeka analizi bulunamadı',
                   processingTime: jobData.result.processing_time_ms
                 })
                 
@@ -173,7 +173,7 @@ export default function DemoHome() {
           })
           
           switch (jobData.job.status) {
-            case 'WAITING':
+            case 'Wyapay zekaTING':
               setAnswerKeyUploadProgress({
                 progress: 100,
                 status: 'processing',
@@ -185,7 +185,7 @@ export default function DemoHome() {
               setAnswerKeyUploadProgress({
                 progress: 100,
                 status: 'analyzing',
-                message: 'Cevap anahtarı OCR ve AI analizi yapılıyor...'
+                message: 'Cevap anahtarı OCR ve yapay zeka analizi yapılıyor...'
               })
               break
               
@@ -203,7 +203,7 @@ export default function DemoHome() {
               if (jobData.result) {
                 setCurrentAnswerKeyResult({
                   ocrText: jobData.result.ocr_text || 'OCR metni bulunamadı',
-                  aiAnalysis: jobData.result.ai_analysis || 'AI analizi bulunamadı',
+                  aiAnalysis: jobData.result.ai_analysis || 'yapay zeka analizi bulunamadı',
                   processingTime: jobData.result.processing_time_ms
                 })
                 
@@ -264,7 +264,7 @@ export default function DemoHome() {
           })
           
           switch (jobData.job.status) {
-            case 'WAITING':
+            case 'Wyapay zekaTING':
               setAnswerKeyUploadProgress({
                 progress: 100,
                 status: 'processing',
@@ -276,7 +276,7 @@ export default function DemoHome() {
               setAnswerKeyUploadProgress({
                 progress: 100,
                 status: 'analyzing',
-                message: 'Öğrenci sınavı OCR ve AI analizi yapılıyor...'
+                message: 'Öğrenci sınavı OCR ve yapay zeka analizi yapılıyor...'
               })
               break
               
@@ -294,7 +294,7 @@ export default function DemoHome() {
               if (jobData.result) {
                 setCurrentAnswerKeyResult({
                   ocrText: jobData.result.ocr_text || 'OCR metni bulunamadı',
-                  aiAnalysis: jobData.result.ai_analysis || 'AI analizi bulunamadı',
+                  aiAnalysis: jobData.result.ai_analysis || 'yapay zeka analizi bulunamadı',
                   processingTime: jobData.result.processing_time_ms
                 })
                 
@@ -519,7 +519,7 @@ export default function DemoHome() {
       case 'analyzing': return 'Analiz Ediliyor'
       case 'completed': return 'Tamamlandı'
       case 'error': return 'Hata'
-      case 'WAITING': return 'Bekliyor'
+      case 'Wyapay zekaTING': return 'Bekliyor'
       case 'PROCESSING': return 'İşleniyor'
       case 'DONE': return 'Tamamlandı'
       case 'ERROR': return 'Hata'
@@ -561,7 +561,7 @@ export default function DemoHome() {
               </div>
               <div>
                 <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                  AI Sınav Analiz Paneli
+                  yapay zeka Sınav Analiz Paneli
                 </h1>
                 <p className="text-gray-600 text-lg">
                   Sınav kağıtlarınızı yükleyin ve yapay zeka ile profesyonel analiz alın
@@ -593,7 +593,7 @@ export default function DemoHome() {
                     </svg>
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900">AI Analiz</h3>
+                    <h3 className="text-lg font-semibold text-gray-900">yapay zeka Analiz</h3>
                     <p className="text-sm text-gray-600">Saniyeler içinde</p>
                   </div>
                 </div>
@@ -707,7 +707,7 @@ export default function DemoHome() {
                         </svg>
                       </div>
                       <div>
-                        <h3 className="text-xl font-bold text-green-900">OCR ve AI Analizi Sonuçları</h3>
+                        <h3 className="text-xl font-bold text-green-900">OCR ve yapay zeka Analizi Sonuçları</h3>
                         <p className="text-green-700">
                           {currentOCRResult.processingTime && `İşlem süresi: ${currentOCRResult.processingTime}ms`}
                         </p>
@@ -730,13 +730,13 @@ export default function DemoHome() {
                         </div>
                       </div>
 
-                      {/* AI Analysis Results */}
+                      {/* yapay zeka Analysis Results */}
                       <div className="bg-white rounded-xl p-5 border border-green-100">
                         <div className="flex items-center space-x-2 mb-4">
                           <svg className="w-5 h-5 text-purple-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                           </svg>
-                          <h4 className="text-lg font-semibold text-gray-900 truncate">AI Analizi</h4>
+                          <h4 className="text-lg font-semibold text-gray-900 truncate">yapay zeka Analizi</h4>
                         </div>
                         <div className="bg-gray-50 rounded-lg p-4 max-h-64 overflow-y-auto custom-scrollbar">
                           <div className="text-sm text-gray-700 whitespace-pre-wrap break-words">
@@ -756,7 +756,7 @@ export default function DemoHome() {
                       </button>
                       <button
                         onClick={() => {
-                          navigator.clipboard.writeText(`OCR Metni:\n${currentOCRResult.ocrText}\n\nAI Analizi:\n${currentOCRResult.aiAnalysis}`)
+                          navigator.clipboard.writeText(`OCR Metni:\n${currentOCRResult.ocrText}\n\nyapay zeka Analizi:\n${currentOCRResult.aiAnalysis}`)
                           alert('Sonuçlar panoya kopyalandı!')
                         }}
                         className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -788,7 +788,7 @@ export default function DemoHome() {
                         <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                           <span className="text-xs font-bold text-blue-600">3</span>
                         </div>
-                        <p className="text-gray-700">Cevap anahtarı AI analizi otomatik başlayacak ve sonuçları göreceksiniz</p>
+                        <p className="text-gray-700">Cevap anahtarı yapay zeka analizi otomatik başlayacak ve sonuçları göreceksiniz</p>
                       </div>
                     </div>
                   </div>
@@ -884,7 +884,7 @@ export default function DemoHome() {
                         </svg>
                       </div>
                       <div>
-                        <h3 className="text-xl font-bold text-green-900">Cevap Anahtarı OCR ve AI Analizi Sonuçları</h3>
+                        <h3 className="text-xl font-bold text-green-900">Cevap Anahtarı OCR ve yapay zeka Analizi Sonuçları</h3>
                         <p className="text-green-700">
                           {currentAnswerKeyResult.processingTime && `İşlem süresi: ${currentAnswerKeyResult.processingTime}ms`}
                         </p>
@@ -907,13 +907,13 @@ export default function DemoHome() {
                         </div>
                       </div>
 
-                      {/* AI Analysis Results */}
+                      {/* yapay zeka Analysis Results */}
                       <div className="bg-white rounded-xl p-5 border border-green-100">
                         <div className="flex items-center space-x-2 mb-4">
                           <svg className="w-5 h-5 text-purple-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                           </svg>
-                          <h4 className="text-lg font-semibold text-gray-900 truncate">Cevap Anahtarı AI Analizi</h4>
+                          <h4 className="text-lg font-semibold text-gray-900 truncate">Cevap Anahtarı yapay zeka Analizi</h4>
                         </div>
                         <div className="bg-gray-50 rounded-lg p-4 max-h-64 overflow-y-auto custom-scrollbar">
                           <div className="text-sm text-gray-700 whitespace-pre-wrap break-words">
@@ -933,7 +933,7 @@ export default function DemoHome() {
                       </button>
                       <button
                         onClick={() => {
-                          navigator.clipboard.writeText(`Cevap Anahtarı OCR Metni:\n${currentAnswerKeyResult.ocrText}\n\nCevap Anahtarı AI Analizi:\n${currentAnswerKeyResult.aiAnalysis}`)
+                          navigator.clipboard.writeText(`Cevap Anahtarı OCR Metni:\n${currentAnswerKeyResult.ocrText}\n\nCevap Anahtarı yapay zeka Analizi:\n${currentAnswerKeyResult.aiAnalysis}`)
                           alert('Cevap anahtarı sonuçları panoya kopyalandı!')
                         }}
                         className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
@@ -965,7 +965,7 @@ export default function DemoHome() {
                         <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                           <span className="text-xs font-bold text-green-600">3</span>
                         </div>
-                        <p className="text-gray-700">AI analizi otomatik olarak başlayacak ve sonuçları göreceksiniz</p>
+                        <p className="text-gray-700">yapay zeka analizi otomatik olarak başlayacak ve sonuçları göreceksiniz</p>
                       </div>
                     </div>
                   </div>

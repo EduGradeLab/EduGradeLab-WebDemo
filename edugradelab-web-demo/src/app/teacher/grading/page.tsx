@@ -263,7 +263,7 @@ export default function TeacherGrading() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <button className="p-4 bg-purple-50 hover:bg-purple-100 rounded-xl text-center transition-colors">
                 <div className="text-2xl mb-2">🤖</div>
-                <div className="text-sm font-medium text-gray-900">AI Notlandırma</div>
+                <div className="text-sm font-medium text-gray-900">yapay zeka Notlandırma</div>
               </button>
               <button className="p-4 bg-blue-50 hover:bg-blue-100 rounded-xl text-center transition-colors">
                 <div className="text-2xl mb-2">📊</div>
