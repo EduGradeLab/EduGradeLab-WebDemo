@@ -196,7 +196,7 @@ export default function RealTimeProgress({
             <span className={`px-2 py-1 text-xs rounded-full ${getStatusColor(progress.status)}`}>
               {progress.status === 'waiting' && 'Bekliyor'}
               {progress.status === 'processing' && 'İşleniyor'}
-              {progress.status === 'analyzing' && 'AI Analizi'}
+              {progress.status === 'analyzing' && 'Yapay Zeka Analizi'}
               {progress.status === 'completed' && 'Tamamlandı'}
               {progress.status === 'error' && 'Hata'}
             </span>

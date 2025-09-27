@@ -29,6 +29,9 @@ export default function RootLayout({
       <body
         className={`${inter.variable} font-sans antialiased bg-gray-50 text-gray-900`}
       >
+        <a href="#hero" className="skip-to-content">
+          Ana içeriğe geç
+        </a>
         <div className="relative">
           {children}
         </div>

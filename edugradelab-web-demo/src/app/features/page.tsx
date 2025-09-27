@@ -34,8 +34,8 @@ export default function FeaturesPage() {
       category: 'core'
     },
     {
-      id: 'ai-analysis',
-      title: 'AI Analizi',
+      id: 'yapay-zeka-analizi',
+      title: 'Yapay Zeka Analizi',
       description: 'Yapay zeka destekli cevap analizi',
       icon: '🧠',
       status: 'coming-soon',

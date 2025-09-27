@@ -298,7 +298,7 @@ export default function DemoLogin() {
               Demo Deneyimi
             </h2>
             <p className="text-gray-600">
-              AI destekli sınav analizimizi hemen deneyin
+              Yapay Zeka destekli sınav analizimizi hemen deneyin
             </p>
             <p className="text-sm text-gray-500 mt-2">
               Email girmek zorunlu değildir. Sadece reCAPTCHA doğrulaması gereklidir.

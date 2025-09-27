@@ -641,7 +641,7 @@ export default function DocumentPage() {
                         <svg className="w-5 h-5 mr-2 text-purple-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                         </svg>
-                        AI Analizi
+                        Yapay Zeka Analizi
                       </h4>
                       <button
                         onClick={() => selectedDocument.aiAnalysis && navigator.clipboard.writeText(selectedDocument.aiAnalysis)}
@@ -737,7 +737,7 @@ export default function DocumentPage() {
                 {selectedDocument.status === 'completed' && (
                   <button 
                     onClick={() => {
-                      const content = `Belge: ${selectedDocument.filename}\nTarih: ${formatDate(selectedDocument.uploadTime)}\nDurum: ${getStatusBadgeText(selectedDocument.status)}\n\nOCR Sonucu:\n${selectedDocument.ocrText || 'OCR metni bulunamadı'}\n\nAI Analizi:\n${selectedDocument.aiAnalysis || 'AI analizi bulunamadı'}\n\nPuan: ${selectedDocument.score || 'Puan yok'}/100`
+                      const content = `Belge: ${selectedDocument.filename}\nTarih: ${formatDate(selectedDocument.uploadTime)}\nDurum: ${getStatusBadgeText(selectedDocument.status)}\n\nOCR Sonucu:\n${selectedDocument.ocrText || 'OCR metni bulunamadı'}\n\nYapay Zeka Analizi:\n${selectedDocument.aiAnalysis || 'Yapay Zeka analizi bulunamadı'}\n\nPuan: ${selectedDocument.score || 'Puan yok'}/100`
                       const blob = new Blob([content], { type: 'text/plain;charset=utf-8' })
                       const url = URL.createObjectURL(blob)
                       const a = document.createElement('a')
