@@ -1,13 +1,11 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Link from 'next/link'
 import RoleSidebar from '@/components/RoleSidebar'
 import {
   demoClasses,
   demoTeachers,
   demoStudents,
-  demoExams,
   getTeacherById,
   getStudentsByClassId,
   getExamsByClassId,

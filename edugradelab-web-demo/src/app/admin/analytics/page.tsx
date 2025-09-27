@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Link from 'next/link'
 import RoleSidebar from '@/components/RoleSidebar'
 import {
   demoStudents,
@@ -10,7 +9,6 @@ import {
   demoGrades,
   getTeacherPerformance,
   getClassStats,
-  getGradesByStudentId
 } from '@/lib/demo-data'
 
 export default function AdminAnalytics() {

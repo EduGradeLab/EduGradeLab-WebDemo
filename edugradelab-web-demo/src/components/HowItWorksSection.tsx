@@ -129,7 +129,7 @@ export default function HowItWorksSection() {
             <div className="text-center group hover:scale-105 transition-all duration-300 cursor-pointer">
               <div className="text-4xl mb-4 transform transition-all duration-300 group-hover:scale-110 group-hover:rotate-6">🛡️</div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2 heading-small group-hover:text-green-600 transition-colors">Güvenli</h3>
-              <p className="text-gray-600 body-regular group-hover:text-gray-800 transition-colors">Verileriniz Türkiye'de kalır</p>
+              <p className="text-gray-600 body-regular group-hover:text-gray-800 transition-colors">Verileriniz Türkiye&apos;de kalır</p>
             </div>
           </div>
         </div>
